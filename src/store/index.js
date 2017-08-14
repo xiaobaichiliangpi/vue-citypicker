@@ -7,6 +7,7 @@ import Vuex from 'vuex'
 import * as actions from './actions'
 import * as getters from './getters'
 import user from './user'
+import order from './order'
 
 Vue.use(Vuex)
 
@@ -16,7 +17,8 @@ export default new Vuex.Store({
   actions,
   getters,
   modules: {
-    user
+    user,
+    order
   },
   strict: debug
 })
