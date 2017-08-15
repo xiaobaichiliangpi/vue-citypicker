@@ -8,5 +8,10 @@ export default [
     name: 'orderAddress',
     path: '/order/address',
     component: resolve => { require(['../components/order/address'], resolve) }
+  },
+  {
+    name: 'orderInvoices',
+    path: '/order/invoices',
+    component: resolve => { require(['../components/order/invoices'], resolve) }
   }
 ]

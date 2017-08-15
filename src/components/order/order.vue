@@ -64,7 +64,7 @@
 
       <div class="order-invoices">
         <mn-card>
-          <mn-card-item type="link">
+          <mn-card-item type="link" @click="$router.push({name: 'orderInvoices'})">
             <mn-card-body>
               <div>
                 发票
