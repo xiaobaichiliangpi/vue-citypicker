@@ -1,4 +1,4 @@
-import local from './local'
+import local from '../local'
 import actions from './actions'
 import mutations from './mutations'
 

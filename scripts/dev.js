@@ -1,4 +1,9 @@
 const WebpackDevRunner = require('freshes-man/helpers/WebpackDevRunner')
 module.exports = new WebpackDevRunner({
-  port: 8066
+  port: 8066,
+  proxyTable: {
+    '/sz': 'http://192.168.100.6:85',
+    '/sh': 'http://192.168.100.6:85',
+    '/wx': 'http://192.168.100.6:85'
+  }
 }).run()

@@ -72,28 +72,38 @@
           <div class="cart-total">小计: ¥0.00</div>
           <div class="cart-count">已选0种, 共0件</div>
         </div>
-        <div class="cart-btn">确认购买(0)</div>
+        <div class="cart-btn" @click="submit">确认购买(0)</div>
       </div>
+      <sign-modal :openModal="toggleModal" @successSign="successSign"></sign-modal>
     </mn-container>
   </mn-scroller>
 </template>
 
 <script>
   import counter from 'vue-human/suites/counter'
+  import SignModal from '../sign/modalSign.vue'
 
   export default {
     components: {
-      ...counter.map()
+      ...counter.map(),
+      SignModal
     },
     data () {
       return {
         counter: undefined,
         icons: {
           cart: require('vue-human-icons/js/ios/cart')
-        }
+        },
+        toggleModal: false
       }
     },
     methods: {
+      submit () {
+        this.toggleModal = !this.toggleModal
+      },
+      successSign () {
+        console.log('denglu chenggong')
+      }
     }
   }
 </script>

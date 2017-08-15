@@ -32,5 +32,18 @@ p {
     &:hover {
       background: darken(#49ab34, 10%);
     }
+
+    &.is-disabled {
+      background: #d8d8d8;
+      color: #999;
+    }
   }
+}
+
+.sign-modal.mn-modal {
+  bottom: inherit;
+  top: 50%;
+  left: 2rem;
+  right: 2rem;
+  transform: translateY(-50%);
 }

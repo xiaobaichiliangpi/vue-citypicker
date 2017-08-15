@@ -1,25 +1,41 @@
-import env from '../env'
 import axios from './axios'
-import isUndefined from 'lodash/isUndefined'
+import { encryptDES } from '../utils/encryptDES'
 
-export function signIn (params = {}) {
-  if (isUndefined(params.username)) {
-    console.warn('缺少 username')
-  }
-
-  if (isUndefined(params.password)) {
-    console.warn('缺少 password')
-  }
-
+export function signIn ({ username, password }) {
   return axios({
     method: 'POST',
-    url: `/oauth/token`,
+    url: `/Sign/SignIn`,
     data: {
-      grant_type: 'password',
-      client_id: env.get('CLIENT_ID'),
-      client_secret: env.get('CLIENT_SECRET'),
-      username: params.username,
-      password: params.password
+      Phone: username,
+      PassWord: encryptDES(password, '8D54E5D0')
+    }
+  })
+}
+
+export function cityList () {
+  return axios({
+    method: 'GET',
+    url: `Basic/CityRouteRequest`
+  })
+}
+
+export function uploadImage (data = {}) {
+  return axios({
+    method: 'POST',
+    url: `/Basic/UploadPicture`,
+    data: {
+      ByteBinary: data.ByteBinary,
+      TypeName: data.TypeName
+    }
+  })
+}
+
+export function sendCommission (data = {}) {
+  return axios({
+    method: 'POST',
+    url: `/Invoices/SendPowerOfAttorneyLink`,
+    data: {
+      ...data
     }
   })
 }

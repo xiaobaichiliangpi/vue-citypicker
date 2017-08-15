@@ -1,4 +1,4 @@
-import local from './local'
+import local from '../local'
 import {
   UPDATE_ADDRESS } from '../mutation-types'
 

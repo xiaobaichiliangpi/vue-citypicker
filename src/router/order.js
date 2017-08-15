@@ -18,5 +18,15 @@ export default [
     name: 'createInvoices',
     path: '/order/invoices/create',
     component: resolve => { require(['../components/order/createInvoices'], resolve) }
+  },
+  {
+    name: 'uploadInvoices',
+    path: '/order/invoices/upload',
+    component: resolve => { require(['../components/order/upload'], resolve) }
+  },
+  {
+    name: 'sendCommission',
+    path: '/order/invoices/sendcommission',
+    component: resolve => { require(['../components/order/sendCommission'], resolve) }
   }
 ]

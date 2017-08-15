@@ -1,5 +1,5 @@
 import tokenStorage from './token'
-import getters from './getters'
+import local from '../local'
 import actions from './actions'
 import mutations from './mutations'
 
@@ -12,7 +12,13 @@ const state = {
    * @property {string} token.access_token     - access token
    * @property {string} token.refresh_token    - refresh token
    */
-  token: tokenStorage.get()
+  token: tokenStorage.get(),
+  city: local.getCity()
+}
+
+const getters = {
+  city: state => state.city,
+  token: state => state.token
 }
 
 export default {
