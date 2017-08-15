@@ -20,3 +20,17 @@ p {
 .has-slide-enter-active {
   transition: transform 0.2s;
 }
+
+.submit-btn {
+  padding: 0 0.75rem;
+
+  .mn-btn.is-primary {
+    background-color: #49ab34;
+    border-radius: 6px;
+
+    &:active,
+    &:hover {
+      background: darken(#49ab34, 10%);
+    }
+  }
+}
