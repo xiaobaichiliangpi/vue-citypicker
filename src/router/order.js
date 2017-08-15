@@ -13,5 +13,10 @@ export default [
     name: 'orderInvoices',
     path: '/order/invoices',
     component: resolve => { require(['../components/order/invoices'], resolve) }
+  },
+  {
+    name: 'createInvoices',
+    path: '/order/invoices/create',
+    component: resolve => { require(['../components/order/createInvoices'], resolve) }
   }
 ]

@@ -4,73 +4,67 @@
       <mn-section>
         <mn-card>
           <mn-card-item>
-            <mn-card-body>需要发票</mn-card-body>
-            <mn-card-suffix action>
-              <mn-turn :data="true" v-model="models.policy"></mn-turn>
-            </mn-card-suffix>
-          </mn-card-item>
-        </mn-card>
-      </mn-section>
-
-      <mn-section class="invoicesType">
-        <h2>发票类型</h2>
-        <mn-card>
-          <mn-card-item>
-            <mn-card-body>
-              <div v-for="item in invoicesType" :class="['invoicesType-item', {'is-selected': item.value === activeType}]" @click="onSelectType(item)">
-                {{item.label}}
-              </div>
-            </mn-card-body>
-          </mn-card-item>
-        </mn-card>
-      </mn-section>
-
-      <mn-section v-if="activeType === 1">
-        <mn-card>
-          <mn-card-item>
             <mn-card-prefix>
-              <mn-label>发票抬头</mn-label>
+              <mn-label>开票抬头</mn-label>
             </mn-card-prefix>
             <mn-card-body>
               <mn-input v-model="models.consignee"
-               placeholder="请填写单位名称"></mn-input>
+               placeholder="单位或公司全称"></mn-input>
             </mn-card-body>
           </mn-card-item>
+          <mn-card-item>
+            <mn-card-prefix>
+              <mn-label>注册地址</mn-label>
+            </mn-card-prefix>
+            <mn-card-body>
+              <mn-input v-model="models.consignee"
+               placeholder="请填写公司详细地址，需与注册一致"></mn-input>
+            </mn-card-body>
+          </mn-card-item>
+          <mn-card-item>
+            <mn-card-prefix>
+              <mn-label>注册电话</mn-label>
+            </mn-card-prefix>
+            <mn-card-body>
+              <mn-input v-model="models.consignee"
+               placeholder="如：0512-88888888"></mn-input>
+            </mn-card-body>
+          </mn-card-item>
+        </mn-card>
+
+        <mn-card>
           <mn-card-item>
             <mn-card-prefix>
               <mn-label>纳税人编号</mn-label>
             </mn-card-prefix>
             <mn-card-body>
               <mn-input v-model="models.consignee"
-               placeholder="纳税人识别号或统一社会信用代码"></mn-input>
+               placeholder="单位或公司全称"></mn-input>
             </mn-card-body>
           </mn-card-item>
-        </mn-card>
-      </mn-section>
-
-      <mn-section v-else>
-        <h2>开票单位</h2>
-        <mn-card>
-          <mn-card-item type="link" :class="[{'is-selected': activeInvoicesId}]">
+          <mn-card-item>
             <mn-card-prefix>
-              <mn-icon :name="icons.check"></mn-icon>
+              <mn-label>开户银行</mn-label>
             </mn-card-prefix>
             <mn-card-body>
-              <p>水族生态管理有限公司</p>
-              <p>纳税人编号: 00012219999</p>
+              <mn-input v-model="models.consignee"
+               placeholder="公司开户银行"></mn-input>
             </mn-card-body>
           </mn-card-item>
-          <mn-card-item @click="$router.push({name: 'createInvoices'})">
+          <mn-card-item>
+            <mn-card-prefix>
+              <mn-label>银行账号</mn-label>
+            </mn-card-prefix>
             <mn-card-body>
-              <mn-icon :name="icons.plus" style="color: #999;"></mn-icon>
-              添加单位
+              <mn-input v-model="models.consignee"
+               placeholder="公司开户银行账号"></mn-input>
             </mn-card-body>
           </mn-card-item>
         </mn-card>
       </mn-section>
 
       <div class="submit-btn">
-        <mn-btn theme="primary" block>确定</mn-btn>
+        <mn-btn theme="primary" block>下一步</mn-btn>
       </div>
     </mn-container>
   </mn-scroller>
