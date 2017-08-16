@@ -106,7 +106,11 @@
       }
     },
     created () {
-      // this.address && (this.models = {...this.address})
+      if (this.address) {
+        Object.keys(this.models).forEach(key => {
+          this.models[key] = this.address[key]
+        })
+      }
     }
   }
 </script>
