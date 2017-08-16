@@ -3,64 +3,21 @@
     <mn-container>
       <div>头部</div>
       <div class="products">
-        <div class="products-item">
+        <div class="products-item" v-if="products" v-for="item in products">
           <div class="products-image">
             <img src="https://picpro-sz.34580.com/sz/ImageUrl/41911/480.png">
           </div>
           <div class="products-title">
-            【提货卡】法国进口红酒拉菲传奇2013波尔多干红葡萄酒双支礼盒装
+            {{item.productName}}
           </div>
           <div class="products-footer">
             <div class="products-price">
               ¥
-              <span class="price-main">500</span>
-              <span>.00</span>
+              <span class="price-main">{{item.price}}</span>
             </div>
             <div class="products-action">
-              <mn-counter v-model="counter" :min="0" v-if="counter > 0"></mn-counter>
-              <div class="cart-btn" v-else>
-                <mn-icon :name="icons.cart" :scale="0.8"></mn-icon>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="products-item">
-          <div class="products-image">
-            <img src="https://picpro-sz.34580.com/sz/ImageUrl/41911/480.png">
-          </div>
-          <div class="products-title">
-            【提货卡】法国进口红酒拉菲传奇2013波尔多干红葡萄酒双支礼盒装
-          </div>
-          <div class="products-footer">
-            <div class="products-price">
-              ¥
-              <span class="price-main">500</span>
-              <span>.00</span>
-            </div>
-            <div class="products-action">
-              <mn-counter v-model="counter" :min="0" v-if="counter > 0"></mn-counter>
-              <div class="cart-btn" v-else>
-                <mn-icon :name="icons.cart" :scale="0.8"></mn-icon>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="products-item">
-          <div class="products-image">
-            <img src="https://picpro-sz.34580.com/sz/ImageUrl/41911/480.png">
-          </div>
-          <div class="products-title">
-            【提货卡】法国进口红酒拉菲传奇2013波尔多干红葡萄酒双支礼盒装
-          </div>
-          <div class="products-footer">
-            <div class="products-price">
-              ¥
-              <span class="price-main">500</span>
-              <span>.00</span>
-            </div>
-            <div class="products-action">
-              <mn-counter v-model="counter" :min="0" v-if="counter > 0"></mn-counter>
-              <div class="cart-btn" v-else>
+              <mn-counter v-model="item.saledNum" :min="0" v-if="item.saledNum > 0"></mn-counter>
+              <div class="cart-btn" v-else @click="addToCart(item)">
                 <mn-icon :name="icons.cart" :scale="0.8"></mn-icon>
               </div>
             </div>
@@ -69,10 +26,10 @@
       </div>
       <div class="cart-bottom">
         <div class="cart-info">
-          <div class="cart-total">小计: ¥0.00</div>
-          <div class="cart-count">已选0种, 共0件</div>
+          <div class="cart-total">小计: ¥{{totalAmount}}</div>
+          <div class="cart-count">已选{{products && products.filter(item => item.saledNum > 0).length}}种, 共{{totalNum}}件</div>
         </div>
-        <div class="cart-btn" @click="submit">确认购买(0)</div>
+        <div class="cart-btn" @click="submitOrder" :class="[{'is-disabled': totalAmount <= 0}]">确认购买({{totalNum}})</div>
       </div>
       <sign-modal :openModal="toggleModal" @successSign="successSign"></sign-modal>
     </mn-container>
@@ -82,6 +39,8 @@
 <script>
   import counter from 'vue-human/suites/counter'
   import SignModal from '../sign/modalSign.vue'
+  import { productList } from '../../axios/product'
+  import { mapGetters } from 'vuex'
 
   export default {
     components: {
@@ -94,16 +53,64 @@
         icons: {
           cart: require('vue-human-icons/js/ios/cart')
         },
-        toggleModal: false
+        toggleModal: false,
+        products: undefined
+      }
+    },
+    computed: {
+      ...mapGetters({
+        token: 'token'
+      }),
+      totalAmount () {
+        let total = 0
+        this.products && this.products.forEach(item => {
+          total += item.saledNum * item.price
+        })
+        return total.toFixed(2)
+      },
+      totalNum () {
+        let total = 0
+        this.products && this.products.forEach(item => {
+          total += item.saledNum
+        })
+        return total
       }
     },
     methods: {
-      submit () {
-        this.toggleModal = !this.toggleModal
+      submitOrder () {
+        if (this.totalAmount <= 0) return
+        if (this.checkSign()) {
+          this.$store.commit('UPDATE_ORDER', this.products.filter(item => {
+            return item.saledNum > 0
+          }))
+
+          this.$router.push({name: 'orderSubmit'})
+        }
       },
       successSign () {
-        console.log('denglu chenggong')
+        this.submitOrder()
+      },
+      checkSign () {
+        if (this.token.AccessToken) return true
+
+        this.toggleModal = !this.toggleModal
+        return false
+      },
+      /**
+       * 商品
+       * @return {[type]} [description]
+       */
+      async productList () {
+        const response = await productList()
+        this.products = response.data._embedded.pickupcardProducts
+      },
+      addToCart (item) {
+        item.saledNum = 1
       }
+    },
+    mounted () {
+      this.productList()
+      // ..
     }
   }
 </script>
@@ -211,9 +218,14 @@
       width: 43.75%;
       line-height: 3rem;
       text-align: center;
-      background: #d8d8d8;
-      color: #989898;
+      background: #f05423;
       font-size: 1rem;
+      color: #fff;
+
+      &.is-disabled {
+        background: #d8d8d8;
+        color: #989898;
+      }
     }
   }
 </style>

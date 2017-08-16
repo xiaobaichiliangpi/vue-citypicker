@@ -8,10 +8,10 @@
               <p>
                 收货信息
                 <span v-if="address">{{address.consignee}}</span>
-                <span v-if="address">{{address.consignee_phonenum}}</span>
+                <span v-if="address">{{address.consigneePhonenum}}</span>
               </p>
               <p class="order-address-info">
-                {{address && address.consignee_address || '请填写收货地址'}}
+                {{address && address.consigneeAddress || '请填写收货地址'}}
               </p>
             </mn-card-body>
           </mn-card-item>
@@ -21,7 +21,7 @@
       <div class="order-products">
         <h3>商品清单</h3>
         <mn-card>
-          <mn-card-item class="order-products-item">
+          <mn-card-item class="order-products-item" v-for="item in order">
             <mn-card-prefix>
               <div class="order-image">
                 <img src="https://picpro-sz.34580.com/sz/ImageUrl/41911/480.png">
@@ -29,34 +29,18 @@
             </mn-card-prefix>
             <mn-card-body>
               <div class="order-products-title">
-                【礼赠卡】法国进口红酒拉菲传奇2013波尔多干红葡萄酒双支礼盒装
+                {{item.productName}}
               </div>
               <div class="order-products-count">
-                <div>¥500.00</div>
-                <div>×1</div>
-              </div>
-            </mn-card-body>
-          </mn-card-item>
-          <mn-card-item  class="order-products-item">
-            <mn-card-prefix>
-              <div class="order-image">
-                <img src="https://picpro-sz.34580.com/sz/ImageUrl/41911/480.png">
-              </div>
-            </mn-card-prefix>
-            <mn-card-body>
-              <div class="order-products-title">
-                【礼赠卡】法国进口红酒拉菲传奇2013波尔多干红葡萄酒双支礼盒装
-              </div>
-              <div class="order-products-count">
-                <div>¥51.00</div>
-                <div>×1</div>
+                <div>¥{{item.price}}</div>
+                <div>×{{item.saledNum}}</div>
               </div>
             </mn-card-body>
           </mn-card-item>
           <mn-card-item class="order-info">
             <mn-card-body>
-              <p>¥2800.00</p>
-              <small>共6件</small>
+              <p>¥{{totalAmount}}</p>
+              <small>共{{totalNum}}件</small>
             </mn-card-body>
           </mn-card-item>
         </mn-card>
@@ -70,7 +54,7 @@
                 发票
               </div>
               <div>
-                不需要发票
+                {{invoices.needInvoices ? invoices.invoicesLabel : '不需要发票'}}
               </div>
             </mn-card-body>
           </mn-card-item>
@@ -94,7 +78,7 @@
       </div>
 
       <div class="order-submit-btn">
-        <mn-btn theme="primary" block>立即支付</mn-btn>
+        <mn-btn theme="primary" block @click="submitOrder">立即支付</mn-btn>
       </div>
     </mn-container>
   </mn-scroller>
@@ -102,6 +86,7 @@
 
 <script>
   import { mapGetters } from 'vuex'
+  import { submitOrder, wxPay } from '../../axios/product'
 
   export default {
     components: {
@@ -112,10 +97,50 @@
     },
     computed: {
       ...mapGetters({
-        address: 'address'
-      })
+        address: 'address',
+        invoices: 'invoices',
+        order: 'order',
+        token: 'token'
+      }),
+      totalAmount () {
+        let total = 0
+        this.order && this.order.forEach(item => {
+          total += item.saledNum * item.price
+        })
+        return total.toFixed(2)
+      },
+      totalNum () {
+        let total = 0
+        this.order && this.order.forEach(item => {
+          total += item.saledNum
+        })
+        return total
+      },
+      products () {
+        let products = {}
+        this.order.forEach(item => {
+          products[item.pickupcardProductId] = item.saledNum
+        })
+        return products
+      }
     },
     methods: {
+      async submitOrder () {
+        if (!this.address.consignee) return
+
+        let data = {
+          ...this.address,
+          customerGuid: this.token.CustomerGuid,
+          products: this.products
+        }
+
+        const response = await submitOrder(data)
+        console.log(response)
+      },
+      async wxPay () {
+        const response = await wxPay()
+        console.log(response)
+      }
     }
   }
 </script>
@@ -177,6 +202,7 @@
       line-height: 1.3rem;
       height: 3.9rem;
       overflow: hidden;
+      flex: 1;
     }
 
     .order-products-count {

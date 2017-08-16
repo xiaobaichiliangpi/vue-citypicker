@@ -14,19 +14,19 @@
           </mn-card-item>
           <mn-card-item>
             <mn-card-prefix>
-              <mn-label :validate="$v.models.consignee_phonenum">联系电话</mn-label>
+              <mn-label :validate="$v.models.consigneePhonenum">联系电话</mn-label>
             </mn-card-prefix>
             <mn-card-body>
-              <mn-input v-model="models.consignee_phonenum"
+              <mn-input v-model="models.consigneePhonenum"
                placeholder="收货人电话"></mn-input>
             </mn-card-body>
           </mn-card-item>
           <mn-card-item class="address-textarea">
             <mn-card-prefix>
-              <mn-label :validate="$v.models.consignee_address">收货地址</mn-label>
+              <mn-label :validate="$v.models.consigneeAddress">收货地址</mn-label>
             </mn-card-prefix>
             <mn-card-body>
-               <mn-textarea v-model="models.consignee_address" placeholder="请填写详细地址" :max-length="100" :rows="2"></mn-textarea>
+               <mn-textarea v-model="models.consigneeAddress" placeholder="请填写详细地址" :max-length="100" :rows="2"></mn-textarea>
             </mn-card-body>
           </mn-card-item>
         </mn-card>
@@ -38,14 +38,14 @@
         </mn-section-note>
 
         <mn-section-note>
-          <mn-helper :validate="$v.models.consignee_phonenum">
+          <mn-helper :validate="$v.models.consigneePhonenum">
             <mn-helper-item name="required">联系电话不能为空</mn-helper-item>
             <mn-helper-item name="phone">手机格式不对</mn-helper-item>
           </mn-helper>
         </mn-section-note>
 
         <mn-section-note>
-          <mn-helper :validate="$v.models.consignee_address">
+          <mn-helper :validate="$v.models.consigneeAddress">
             <mn-helper-item name="required">收货地址不能为空</mn-helper-item>
           </mn-helper>
         </mn-section-note>
@@ -74,13 +74,13 @@
         consignee: {
           required
         },
-        consignee_phonenum: {
+        consigneePhonenum: {
           required,
           phone () {
-            return /^1[3|4|5|7|8][0-9]{9}$/.test(this.models.consignee_phonenum)
+            return /^1[3|4|5|7|8][0-9]{9}$/.test(this.models.consigneePhonenum)
           }
         },
-        consignee_address: {
+        consigneeAddress: {
           required
         }
       }
@@ -89,8 +89,8 @@
       return {
         models: {
           consignee: undefined,
-          consignee_phonenum: undefined,
-          consignee_address: undefined
+          consigneePhonenum: undefined,
+          consigneeAddress: undefined
         }
       }
     },
@@ -106,7 +106,7 @@
       }
     },
     created () {
-      this.models = {...this.address}
+      // this.address && (this.models = {...this.address})
     }
   }
 </script>

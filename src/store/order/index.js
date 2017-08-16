@@ -11,11 +11,17 @@ const state = {
    * @property {string} token.access_token     - access token
    * @property {string} token.refresh_token    - refresh token
    */
-  address: local.getAddress()
+  address: local.getAddress(),
+  qualification: local.getQualification(),
+  invoices: local.getInvoices(),
+  order: local.getOrder()
 }
 
 const getters = {
-  address: state => state.address
+  address: state => state.address,
+  qualification: state => state.qualification,
+  invoices: state => state.invoices,
+  order: state => state.order
 }
 
 export default {

@@ -54,7 +54,7 @@
       </mn-card>
 
       <div class="submit-btn">
-        <mn-btn theme="primary" block :disabled="!PowerOfAttorneyImage || !BusinessLicenseImage" @click="submit">下一步</mn-btn>
+        <mn-btn theme="primary" block :disabled="!PowerOfAttorneyImage || !BusinessLicenseImage" @click="submit">提交申请</mn-btn>
       </div>
     </div>
   </div>
@@ -62,12 +62,12 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import { uploadImage } from '../../axios/user'
+  import { uploadImage, applyQualification } from '../../axios/user'
 
   export default {
     computed: {
       ...mapGetters({
-        token: 'token'
+        qualification: 'qualification'
       })
     },
     data () {
@@ -98,7 +98,22 @@
         }
       },
       submit () {
-        console.log(11)
+        this.applyQualification()
+        .then(response => {
+          this.$router.go(-2)
+        })
+      },
+      /**
+       * 申请资质
+       * @return {[type]} [description]
+       */
+      async applyQualification () {
+        const response = await applyQualification({
+          ...this.qualification,
+          BusinessLicenseImage: this.BusinessLicenseImage,
+          PowerOfAttorneyImage: this.PowerOfAttorneyImage
+        })
+        return response
       }
     }
   }

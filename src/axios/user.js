@@ -39,3 +39,28 @@ export function sendCommission (data = {}) {
     }
   })
 }
+
+export function applyQualification (data = {}) {
+  return axios({
+    method: 'POST',
+    url: `/Invoices/ApplyQualification`,
+    data: {
+      ...data
+    }
+  })
+}
+
+export function qualificationList () {
+  return axios({
+    method: 'GET',
+    url: `/Invoices/QualificationRecordsRequest`
+  })
+}
+
+export function wxPay (data = {}) {
+  return axios({
+    method: 'POST',
+    url: `/Pay/PhoneWxJsPay`,
+    data: data
+  })
+}
