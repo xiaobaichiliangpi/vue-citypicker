@@ -67,7 +67,7 @@
                 <p>纳税人编号: {{item.TaxNumber}}</p>
               </mn-card-body>
             </mn-card-item>
-            <mn-card-item @click="$router.push({name: 'createInvoices'})">
+            <mn-card-item @click.native="$router.push({name: 'createInvoices'})">
               <mn-card-body>
                 <mn-icon :name="icons.plus" style="color: #999;"></mn-icon>
                 添加单位
@@ -88,6 +88,7 @@
   import input from 'vue-human/suites/input'
   import turn from 'vue-human/suites/turn'
   import { qualificationList } from '../../axios/user'
+  import { mapGetters } from 'vuex'
 
   export default {
     components: {
@@ -118,6 +119,9 @@
       }
     },
     computed: {
+      ...mapGetters({
+        invoices: 'invoices'
+      }),
       disableSubmit () {
         if (!this.needInvoices) return false
 
@@ -165,9 +169,29 @@
     },
     created () {
       this.qualificationList()
+      this.needInvoices = this.invoices.needInvoices
+      this.activeType = this.invoices.invoicesType
+      if (this.activeType === 1) {
+        this.models = this.invoices.content
+      } else {
+        this.activeInvoices = this.invoices.content
+      }
     }
   }
 </script>
 
 <style lang="scss">
+.invoicesType-item {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid #666;
+  color: #666;
+  border-radius: 3px;
+  margin-right: 0.5rem;
+
+  &.is-selected {
+    color: #49ab34;
+    border-color: #49ab34;
+  }
+}
 </style>
