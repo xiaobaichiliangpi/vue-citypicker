@@ -21,7 +21,10 @@
       <div class="order-products">
         <h3>商品清单</h3>
         <mn-card>
-          <mn-card-item class="order-products-item" v-for="item in order">
+          <mn-card-item
+            class="order-products-item"
+            v-for="(item, key) in order"
+            :key="key">
             <mn-card-prefix>
               <div class="order-image">
                 <img src="https://picpro-sz.34580.com/sz/ImageUrl/41911/480.png">
@@ -86,7 +89,8 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import { submitOrder, wxPay } from '../../axios/product'
+  import { submitOrder } from '../../axios/product'
+  import { wxPay } from '../../axios/user'
 
   export default {
     components: {

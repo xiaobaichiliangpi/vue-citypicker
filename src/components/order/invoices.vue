@@ -18,7 +18,7 @@
           <mn-card>
             <mn-card-item>
               <mn-card-body>
-                <div v-for="item in invoicesType" :class="['invoicesType-item', {'is-selected': item.value === activeType}]" @click="onSelectType(item)">
+                <div v-for="(item, key) in invoicesType" :key="key" :class="['invoicesType-item', {'is-selected': item.value === activeType}]" @click="onSelectType(item)">
                   {{item.label}}
                 </div>
               </mn-card-body>
@@ -56,7 +56,8 @@
               type="link"
               :class="[{'is-selected': activeInvoices && (activeInvoices.Id === item.Id)}]"
               v-if="qualifications"
-              v-for="item in qualifications"
+              v-for="(item, key) in qualifications"
+              :key="key"
               @click="onSelectInvoices(item)">
               <mn-card-prefix v-if="activeInvoices && (activeInvoices.Id === item.Id)">
                 <mn-icon :name="icons.check"></mn-icon>
