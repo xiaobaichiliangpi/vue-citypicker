@@ -134,6 +134,14 @@
           products: this.products
         }
 
+        if (this.invoices.needInvoices) {
+          let invoices = {
+            receiptType: this.invoices.invoicesType,
+            ...this.invoices.content
+          }
+
+          data = {...data, receiptInputBean: invoices}
+        }
         const response = await submitOrder(data)
         console.log(response)
       },
