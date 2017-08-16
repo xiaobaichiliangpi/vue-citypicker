@@ -1,9 +1,13 @@
 <template>
-  <mn-scroller>
+  <mn-scroller @bottom="onScrollBottom">
     <mn-container>
       <div>头部</div>
       <div class="products">
-        <div class="products-item" v-if="products" v-for="item in products">
+        <div
+          class="products-item"
+          v-if="products"
+          v-for="(item, key) in products"
+          :key="key">
           <div class="products-image">
             <img src="https://picpro-sz.34580.com/sz/ImageUrl/41911/480.png">
           </div>
@@ -23,6 +27,8 @@
             </div>
           </div>
         </div>
+        <div class="loading-text" v-if="loading"><mn-loading-icon></mn-loading-icon>正在加载中</div>
+        <div class="loading-text" v-else>没有更多了</div>
       </div>
       <div class="cart-bottom">
         <div class="cart-info">
@@ -54,12 +60,19 @@
           cart: require('vue-human-icons/js/ios/cart')
         },
         toggleModal: false,
-        products: undefined
+        products: undefined,
+        models: {
+          page: 0,
+          size: 10
+        },
+        loading: false,
+        nextHref: true
       }
     },
     computed: {
       ...mapGetters({
-        token: 'token'
+        token: 'token',
+        selectedProducts: 'order'
       }),
       totalAmount () {
         let total = 0
@@ -101,16 +114,46 @@
        * @return {[type]} [description]
        */
       async productList () {
-        const response = await productList()
-        this.products = response.data._embedded.pickupcardProducts
+        if (this.loading || !this.nextHref) return
+
+        this.loading = true
+        const response = await productList(this.models)
+        this.products = [...(this.products || []), ...response.data._embedded.pickupcardProducts]
+        this.nextHref = response.data._links.next
+        this.models.page += 1
+        this.loading = false
+      },
+      /**
+       * 设置已选择产品
+       */
+      setSelectedProduct () {
+        this.selectedProducts && this.selectedProducts.forEach(item => {
+          let [product] = this.products.filter(val => {
+            return val.pickupcardProductId === item.pickupcardProductId
+          })
+
+          product.saledNum = item.saledNum
+        })
       },
       addToCart (item) {
         item.saledNum = 1
+      },
+      /**
+       * 滚动到底部
+       * @return {[type]} [description]
+       */
+      onScrollBottom () {
+        this.productList()
       }
     },
     mounted () {
       this.productList()
       // ..
+    },
+    watch: {
+      products () {
+        this.setSelectedProduct()
+      }
     }
   }
 </script>
@@ -227,5 +270,10 @@
         color: #989898;
       }
     }
+  }
+
+  .loading-text {
+    text-align: center;
+    color: #666;
   }
 </style>

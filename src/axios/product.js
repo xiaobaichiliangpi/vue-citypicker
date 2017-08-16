@@ -1,9 +1,10 @@
 import axios from './simpleAxios'
 
-export function productList () {
+export function productList (params = {}) {
   return axios({
     method: 'GET',
-    url: `/pickupcard/api/pickupcardmanage/pickupcard`
+    url: `/pickupcard/api/pickupcardmanage/pickupcard`,
+    params: params
   })
 }
 
