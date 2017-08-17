@@ -15,3 +15,11 @@ export function submitOrder (data = {}) {
     data: data
   })
 }
+
+export function orderList (params = {}) {
+  return axios({
+    method: 'GET',
+    url: `/pickupcard/api/pickupcardmanage/order`,
+    params: params
+  })
+}
