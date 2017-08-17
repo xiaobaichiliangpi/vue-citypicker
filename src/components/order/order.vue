@@ -67,22 +67,27 @@
       <div class="order-paytype">
         <h3>支付方式</h3>
         <mn-card>
-          <mn-card-item>
+          <mn-card-item v-if="checkWx()">
             <mn-card-body>
               <p>微信支付</p>
+              <mn-icon :name="icons.check"></mn-icon>
             </mn-card-body>
           </mn-card-item>
-          <mn-card-item>
+          <mn-card-item v-else>
             <mn-card-body>
               <p>支付宝支付</p>
+              <mn-icon :name="icons.check"></mn-icon>
             </mn-card-body>
           </mn-card-item>
         </mn-card>
       </div>
 
       <div class="order-submit-btn">
-        <mn-btn theme="primary" block @click="submitOrder">立即支付</mn-btn>
+        <mn-btn theme="primary" block @click="onClickSubmit">立即支付</mn-btn>
       </div>
+      <div class="alipaysubmit" v-html="aliPayHtml" v-if="aliPayHtml">
+      </div>
+
     </mn-container>
   </mn-scroller>
 </template>
@@ -90,13 +95,17 @@
 <script>
   import { mapGetters } from 'vuex'
   import { submitOrder } from '../../axios/product'
-  import { wxPay } from '../../axios/user'
+  import { wxPay, aliPay } from '../../axios/user'
 
   export default {
     components: {
     },
     data () {
       return {
+        icons: {
+          check: require('vue-human-icons/js/ios/checkmark-empty')
+        },
+        aliPayHtml: ''
       }
     },
     computed: {
@@ -129,9 +138,21 @@
       }
     },
     methods: {
-      async submitOrder () {
+      onClickSubmit () {
         if (!this.address.consignee) return
 
+        this.submitOrder()
+        .then(response => {
+          const order = response.data
+
+          if (this.checkWx()) {
+
+          } else {
+            this.aliPay(order)
+          }
+        })
+      },
+      async submitOrder () {
         let data = {
           ...this.address,
           customerGuid: this.token.CustomerGuid,
@@ -147,11 +168,33 @@
           data = {...data, receiptInputBean: invoices}
         }
         const response = await submitOrder(data)
-        console.log(response)
+        return response
       },
       async wxPay () {
         const response = await wxPay()
         console.log(response)
+      },
+      async aliPay (order) {
+        const data = {
+          Amount: order.totalPrice,
+          OrderId: order.pickupcardOrderId,
+          ReturnUrl: `${location.origin}/#/order/result/${order.pickupcardOrderId}`,
+          ShowUrl: `${location.origin}/#/order/result/${order.pickupcardOrderId}`
+        }
+
+        const response = await aliPay(data)
+        this.aliPayHtml = response.data.Data.PreSignStr
+
+        this.$nextTick(() => {
+          this.submitToAli()
+        })
+        // this.submitToAli()
+      },
+      checkWx () {
+        return /micromessenger/.test(navigator.userAgent.toLowerCase())
+      },
+      submitToAli () {
+        document.forms['alipaysubmit'].submit()
       }
     }
   }
@@ -275,6 +318,14 @@
     &:hover {
       background-color: darken(#f05423, 10%);
     }
+  }
+}
+
+.order-paytype {
+  .mn-card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 </style>
