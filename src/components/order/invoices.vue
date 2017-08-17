@@ -170,8 +170,8 @@
     created () {
       this.qualificationList()
       this.needInvoices = this.invoices.needInvoices
-      this.activeType = this.invoices.invoicesType
-      if (this.activeType === 1) {
+      this.activeType = this.invoices.invoicesType || 1
+      if (this.activeType === 1 && this.invoices.content) {
         this.models = this.invoices.content
       } else {
         this.activeInvoices = this.invoices.content
