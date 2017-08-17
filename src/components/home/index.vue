@@ -1,7 +1,9 @@
 <template>
   <mn-scroller @bottom="onScrollBottom">
     <mn-container>
-      <div>头部</div>
+      <div class="home-header">
+        <span class="home-header-btn" @click="pushOrder">我的提货卡订单</span>
+      </div>
       <div class="products">
         <div
           class="products-item"
@@ -101,7 +103,7 @@
         }
       },
       successSign () {
-        this.submitOrder()
+        // this.submitOrder()
       },
       checkSign () {
         if (this.token.AccessToken) return true
@@ -144,6 +146,9 @@
        */
       onScrollBottom () {
         this.productList()
+      },
+      pushOrder () {
+        if (this.checkSign()) this.$router.push({name: 'orderList'})
       }
     },
     mounted () {
@@ -270,6 +275,25 @@
         background: #d8d8d8;
         color: #989898;
       }
+    }
+  }
+
+  .home-header {
+    height: 10rem;
+    background: #ccc;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 2rem;
+    margin-bottom: 1rem;
+
+    &-btn {
+      display: inline-block;
+      background: #fff;
+      padding: 0 1rem;
+      line-height: 1.8rem;
+      height: 1.8rem;
+      border-radius: .9rem;
     }
   }
 </style>
