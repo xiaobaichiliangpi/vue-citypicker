@@ -1,13 +1,17 @@
 import axios from './axios'
+import simpleAxios from './simpleAxios'
 import { encryptDES } from '../utils/encryptDES'
+import env from '../env'
+import store from '../store'
 
 export function signIn ({ username, password }) {
-  return axios({
+  return simpleAxios({
     method: 'POST',
-    url: `/Sign/SignIn`,
+    url: `${env.get('API')}/${(store.state.user.city && store.state.user.city.CityFlag) || 'sz'}/Sign/SignIn`,
     data: {
       Phone: username,
-      PassWord: encryptDES(password, '8D54E5D0')
+      PassWord: encryptDES(password, '8D54E5D0'),
+      sourcetype: env.get('APP_TYPE')
     }
   })
 }
@@ -61,6 +65,22 @@ export function wxPay (data = {}) {
   return axios({
     method: 'POST',
     url: `/Pay/PhoneWxJsPay`,
-    data: data
+    data: {
+      PlatFormType: 2,
+      BusinessType: 2,
+      ...data
+    }
+  })
+}
+
+export function aliPay (data = {}) {
+  return axios({
+    method: 'POST',
+    url: `/Pay/PhoneAliWapPay`,
+    data: {
+      PlatFormType: 2,
+      BusinessType: 2,
+      ...data
+    }
   })
 }
