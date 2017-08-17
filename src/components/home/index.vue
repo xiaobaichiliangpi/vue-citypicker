@@ -92,8 +92,13 @@
       }
     },
     methods: {
+      /**
+       * 提交订单
+       * @return {[type]} [description]
+       */
       submitOrder () {
         if (this.totalAmount <= 0) return
+
         if (this.checkSign()) {
           this.$store.commit('UPDATE_ORDER', this.products.filter(item => {
             return item.saledNum > 0
@@ -108,7 +113,12 @@
       checkSign () {
         if (this.token.AccessToken) return true
 
-        this.toggleModal = !this.toggleModal
+        if (this.checkWx()) {
+          this.toggleModal = !this.toggleModal
+        } else {
+          window.open('http://m.34580.com/login/index', '_self')
+        }
+
         return false
       },
       /**
@@ -149,10 +159,30 @@
       },
       pushOrder () {
         if (this.checkSign()) this.$router.push({name: 'orderList'})
+      },
+      checkWx () {
+        return !/micromessenger/.test(navigator.userAgent.toLowerCase())
       }
     },
     mounted () {
-      console.log(this.$route.query)
+      // 检查微信, 非微信的状态下(app) 将token信息更新
+      if (!this.checkWx()) {
+        const token = {
+          CustomerGuid: this.$route.query.CustomerGuid,
+          AccessToken: this.$route.query.AccessToken
+        }
+
+        this.$store.commit('UPDATE_AUTH_TOKEN', token)
+      }
+
+      // cityid更新
+
+      if (this.$route.query.cityid) {
+        this.$store.commit('UPDATE_CITY', {
+          value: this.$route.query.cityid
+        })
+      }
+
       this.productList()
       // ..
     },
