@@ -28,7 +28,7 @@
           </div>
         </div>
         <div class="loading-text" v-if="loading"><mn-loading-icon></mn-loading-icon>正在加载中</div>
-        <div class="loading-text" v-else>没有更多了</div>
+        <div class="loading-text" v-if="!nextHref">没有更多了</div>
       </div>
       <div class="cart-bottom">
         <div class="cart-info">
@@ -147,6 +147,7 @@
       }
     },
     mounted () {
+      console.log(this.$route.query)
       this.productList()
       // ..
     },
@@ -270,10 +271,5 @@
         color: #989898;
       }
     }
-  }
-
-  .loading-text {
-    text-align: center;
-    color: #666;
   }
 </style>
