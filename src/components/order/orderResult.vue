@@ -23,7 +23,7 @@
       </div>
 
       <div class="submit-btn">
-        <mn-btn theme="primary" ref="submit" block>前往我的订单</mn-btn>
+        <mn-btn theme="primary" ref="submit" block @click="$router.push({name: 'orderList'})">前往我的订单</mn-btn>
       </div>
     </mn-container>
   </mn-scroller>
@@ -62,6 +62,7 @@
         this.timer = window.setInterval(() => {
           this.orderList()
           if (this.orderDetail && this.orderDetail.orderStatus === 2) {
+            this.$store.commit('UPDATE_ORDER', [])
             window.clearInterval(this.timer)
             this.timer = undefined
           }
@@ -70,6 +71,10 @@
     },
     created () {
       this.pollOrder()
+    },
+    beforeDestroy () {
+      window.clearInterval(this.timer)
+      this.timer = undefined
     }
   }
 </script>
