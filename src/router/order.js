@@ -39,5 +39,13 @@ export default [
       title: '我的提货卡订单'
     },
     component: resolve => { require(['../components/order/list'], resolve) }
+  },
+  {
+    name: 'orderResult',
+    path: '/order/result/:orderId',
+    meta: {
+      title: '提货卡订单下单结果'
+    },
+    component: resolve => { require(['../components/order/orderResult'], resolve) }
   }
 ]
