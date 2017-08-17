@@ -6,20 +6,19 @@ import Vue from 'vue'
 
 export default class AxiosHelper extends BaseAxiosHelper {
   config () {
-    const token = window.JSON.parse(window.localStorage.getItem('GIFTCARDTOKEN'))
+    // const token = window.JSON.parse(window.localStorage.getItem('GIFTCARDTOKEN'))
     return {
-      baseURL: `${env.get('API')}/${(store.state.user.city && store.state.user.city.CityFlag) || 'sz'}`,
+      baseURL: `${env.get('API')}/${(store.getters.city && store.getters.city.CityFlag) || 'sz'}`,
       headers: {
-        Accept: 'application/json',
-        Authorization: `${store.state.user.token.token_type} ${store.state.user.token.access_token}`
+        Accept: 'application/json'
       },
       params: {
-        accesstoken: token && token.AccessToken,
-        customerguid: token && token.CustomerGuid,
+        accesstoken: store.getters.token.AccessToken,
+        customerguid: store.getters.token.CustomerGuid,
         sourcetype: Vue.env.get('APP_TYPE')
       },
       data: {
-        CustomerGuid: token && token.CustomerGuid,
+        CustomerGuid: store.getters.token.CustomerGuid,
         SourceType: Vue.env.get('APP_TYPE')
       }
     }

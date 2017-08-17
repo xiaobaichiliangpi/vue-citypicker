@@ -1,4 +1,4 @@
-import { signIn } from '../../axios/user'
+import { signIn } from '../../axios/sign'
 import { UPDATE_AUTH_TOKEN } from '../mutation-types'
 
 const namespace = 'user'
