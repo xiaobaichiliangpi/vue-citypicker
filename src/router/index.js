@@ -9,6 +9,9 @@ const router = new VueRouter({
     {
       path: '/',
       name: 'homepage',
+      meta: {
+        title: '食行生鲜提货卡'
+      },
       component: resolve => { require(['../components/home'], resolve) }
     },
     {

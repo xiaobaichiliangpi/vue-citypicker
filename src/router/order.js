@@ -10,26 +10,41 @@ export default [
   {
     name: 'orderAddress',
     path: '/order/address',
+    meta: {
+      title: '添加收货信息'
+    },
     component: resolve => { require(['../components/order/address'], resolve) }
   },
   {
     name: 'orderInvoices',
     path: '/order/invoices',
+    meta: {
+      title: '发票'
+    },
     component: resolve => { require(['../components/order/invoices'], resolve) }
   },
   {
     name: 'createInvoices',
     path: '/order/invoices/create',
+    meta: {
+      title: '添加单位信息'
+    },
     component: resolve => { require(['../components/order/createInvoices'], resolve) }
   },
   {
     name: 'uploadInvoices',
     path: '/order/invoices/upload',
+    meta: {
+      title: '上传证书'
+    },
     component: resolve => { require(['../components/order/upload'], resolve) }
   },
   {
     name: 'sendCommission',
     path: '/order/invoices/sendcommission',
+    meta: {
+      title: '委托书模板'
+    },
     component: resolve => { require(['../components/order/sendCommission'], resolve) }
   },
   {
