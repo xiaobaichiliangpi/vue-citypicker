@@ -1,9 +1,11 @@
 import axios from './axios'
+import Vue from 'vue'
+import store from '../store'
 
 export function cityList () {
   return axios({
     method: 'GET',
-    url: `Basic/CityRouteRequest`
+    url: `/Basic/CityRouteRequest`
   })
 }
 
@@ -13,7 +15,9 @@ export function uploadImage (data = {}) {
     url: `/Basic/UploadPicture`,
     data: {
       ByteBinary: data.ByteBinary,
-      TypeName: data.TypeName
+      TypeName: data.TypeName,
+      CustomerGuid: store.getters.token.CustomerGuid,
+      SourceType: Vue.env.get('APP_TYPE')
     }
   })
 }
@@ -33,7 +37,9 @@ export function applyQualification (data = {}) {
     method: 'POST',
     url: `/Invoices/ApplyQualification`,
     data: {
-      ...data
+      ...data,
+      CustomerGuid: store.getters.token.CustomerGuid,
+      SourceType: Vue.env.get('APP_TYPE')
     }
   })
 }
@@ -50,8 +56,10 @@ export function wxPay (data = {}) {
     method: 'POST',
     url: `/Pay/PhoneWxJsPay`,
     data: {
-      PlatFormType: 2,
-      BusinessType: 2,
+      PlatFormType: 9,
+      BusinessType: 4,
+      CustomerGuid: store.getters.token.CustomerGuid,
+      SourceType: Vue.env.get('APP_TYPE'),
       ...data
     }
   })
@@ -62,8 +70,10 @@ export function aliPay (data = {}) {
     method: 'POST',
     url: `/Pay/PhoneAliWapPay`,
     data: {
-      PlatFormType: 2,
-      BusinessType: 2,
+      PlatFormType: 9,
+      BusinessType: 4,
+      CustomerGuid: store.getters.token.CustomerGuid,
+      SourceType: Vue.env.get('APP_TYPE'),
       ...data
     }
   })
