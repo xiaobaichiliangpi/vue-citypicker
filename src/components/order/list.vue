@@ -1,8 +1,16 @@
 <template>
   <mn-scroller @bottom="onScrollBottom">
     <mn-container>
-      <mn-card v-for="(item, key) in orders" :key="key">
-        <mn-card-item v-if="orders">
+      <mn-card v-for="(item, key) in orders" :key="key" v-if="orders">
+         <mn-card-item >
+          <mn-card-prefix>
+            <mn-label>订单状态</mn-label>
+          </mn-card-prefix>
+          <mn-card-body>
+            {{item.orderStatus === 2 ? '支付成功' : '未支付'}}
+          </mn-card-body>
+        </mn-card-item>
+        <mn-card-item>
           <mn-card-prefix>
             <mn-label>订单编号</mn-label>
           </mn-card-prefix>
@@ -41,14 +49,14 @@
           <mn-card-body class="buyed-warrper">
             <div class="buyed-list">
               <div class="buyed-item" v-for="(product, pKey) in item.calculateDetailList.slice(0, 3)" :key="pKey">
-
+                <img :src="product.imagePath">
               </div>
             </div>
             <div class="buyed-info">
               <div>
                 ¥{{item.totalPrice}}
               </div>
-              <div>共6件</div>
+              <div>共{{item.totalnum}}件</div>
             </div>
           </mn-card-body>
         </mn-card-item>
@@ -73,7 +81,8 @@
         nextHref: true,
         models: {
           page: 0,
-          size: 10
+          size: 10,
+          sort: 'pickupcardOrderId,desc'
         }
       }
     },
@@ -138,12 +147,18 @@
   .buyed-list {
     display: flex;
     align-items: center;
+    padding-top: 0.5rem;
 
     .buyed-item {
-      width: 3rem;
-      height: 3rem;
-      background: #ccc;
+      width: 4rem;
+      height: 4rem;
       margin: 0 0.3rem;
+
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
     }
   }
 }
