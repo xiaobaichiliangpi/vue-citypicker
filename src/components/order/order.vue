@@ -96,6 +96,7 @@
   import { mapGetters } from 'vuex'
   import { submitOrder } from '../../axios/product'
   import { wxPay, aliPay } from '../../axios/user'
+  import Alert from 'vue-human/utils/Alert'
 
   export default {
     components: {
@@ -139,7 +140,14 @@
     },
     methods: {
       onClickSubmit () {
-        if (!this.address.consignee) return
+        if (!this.address.consignee) {
+          this.alertLayer = Alert.create({
+            title: '地址未填写',
+            cancelText: '知道了'
+          }).show()
+
+          return
+        }
 
         this.submitOrder()
         .then(response => {
@@ -188,7 +196,6 @@
         this.$nextTick(() => {
           this.submitToAli()
         })
-        // this.submitToAli()
       },
       checkWx () {
         return /micromessenger/.test(navigator.userAgent.toLowerCase())
@@ -196,6 +203,9 @@
       submitToAli () {
         document.forms['alipaysubmit'].submit()
       }
+    },
+    beforeDestroy () {
+      if (this.alertLayer) this.alertLayer.destroy()
     }
   }
 </script>
