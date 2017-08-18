@@ -1,47 +1,49 @@
 <template>
-  <mn-scroller @bottom="onScrollBottom">
-    <mn-container>
-      <div class="home-header">
-        <span class="home-header-btn" @click="pushOrder">我的提货卡订单</span>
-      </div>
-      <div class="products">
-        <div
-          class="products-item"
-          v-if="products"
-          v-for="(item, key) in products"
-          :key="key">
-          <div class="products-image">
-            <img src="https://picpro-sz.34580.com/sz/ImageUrl/41911/480.png">
-          </div>
-          <div class="products-title">
-            {{item.productName}}
-          </div>
-          <div class="products-footer">
-            <div class="products-price">
-              ¥
-              <span class="price-main">{{item.price}}</span>
+  <div>
+    <sign-modal :openModal="toggleModal" @successSign="successSign"></sign-modal>
+    <mn-scroller @bottom="onScrollBottom">
+      <mn-container>
+        <div class="home-header">
+          <span class="home-header-btn" @click="pushOrder">我的提货卡订单</span>
+        </div>
+        <div class="products">
+          <div
+            class="products-item"
+            v-if="products"
+            v-for="(item, key) in products"
+            :key="key">
+            <div class="products-image">
+              <img :src="item.imagePath">
             </div>
-            <div class="products-action">
-              <mn-counter v-model="item.saledNum" :min="0" v-if="item.saledNum > 0"></mn-counter>
-              <div class="cart-btn" v-else @click="addToCart(item)">
-                <mn-icon :name="icons.cart" :scale="0.8"></mn-icon>
+            <div class="products-title">
+              {{item.productName}}
+            </div>
+            <div class="products-footer">
+              <div class="products-price">
+                ¥
+                <span class="price-main">{{item.price}}</span>
+              </div>
+              <div class="products-action">
+                <mn-counter v-model="item.saledNum" :min="0" v-if="item.saledNum > 0"></mn-counter>
+                <div class="cart-btn" v-else @click="addToCart(item)">
+                  <mn-icon :name="icons.cart" :scale="0.8"></mn-icon>
+                </div>
               </div>
             </div>
           </div>
+          <div class="loading-text" v-if="loading"><mn-loading-icon></mn-loading-icon>正在加载中</div>
+          <div class="loading-text" v-if="!nextHref">没有更多了</div>
         </div>
-        <div class="loading-text" v-if="loading"><mn-loading-icon></mn-loading-icon>正在加载中</div>
-        <div class="loading-text" v-if="!nextHref">没有更多了</div>
-      </div>
-      <div class="cart-bottom">
-        <div class="cart-info">
-          <div class="cart-total">小计: ¥{{totalAmount}}</div>
-          <div class="cart-count">已选{{products && products.filter(item => item.saledNum > 0).length}}种, 共{{totalNum}}件</div>
+        <div class="cart-bottom">
+          <div class="cart-info">
+            <div class="cart-total">小计: ¥{{totalAmount}}</div>
+            <div class="cart-count">已选{{products && products.filter(item => item.saledNum > 0).length}}种, 共{{totalNum}}件</div>
+          </div>
+          <div class="cart-btn" @click="submitOrder" :class="[{'is-disabled': totalAmount <= 0}]">确认购买({{totalNum}})</div>
         </div>
-        <div class="cart-btn" @click="submitOrder" :class="[{'is-disabled': totalAmount <= 0}]">确认购买({{totalNum}})</div>
-      </div>
-      <sign-modal :openModal="toggleModal" @successSign="successSign"></sign-modal>
-    </mn-container>
-  </mn-scroller>
+      </mn-container>
+    </mn-scroller>
+  </div>
 </template>
 
 <script>
