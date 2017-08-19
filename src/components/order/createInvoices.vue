@@ -95,6 +95,7 @@
   import input from 'vue-human/suites/input'
   import turn from 'vue-human/suites/turn'
   import textarea from 'vue-human/suites/textarea'
+  import { mapGetters } from 'vuex'
 
   export default {
     components: {
@@ -121,7 +122,10 @@
         }
 
         return false
-      }
+      },
+      ...mapGetters({
+        qualification: 'qualification'
+      })
     },
     methods: {
       nextStep () {
@@ -130,6 +134,9 @@
       }
     },
     created () {
+      if (this.qualification.ApplyName) {
+        this.models = {...this.qualification}
+      }
     },
     beforeDestroy () {
       if (this.alertLayer) this.alertLayer.destroy()

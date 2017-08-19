@@ -27,7 +27,7 @@ export default [
     name: 'createInvoices',
     path: '/order/invoices/create',
     meta: {
-      title: '添加单位信息'
+      title: '单位信息'
     },
     component: resolve => { require(['../components/order/createInvoices'], resolve) }
   },
