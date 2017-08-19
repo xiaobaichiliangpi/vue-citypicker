@@ -5,6 +5,8 @@ const CITY_NAME = `${Vue.env.get('STORAGE_PREFIX')}CITY`
 const QUALIFICATION_NAME = `${Vue.env.get('STORAGE_PREFIX')}QUALIFICATION`
 const INVOICES_NAME = `${Vue.env.get('STORAGE_PREFIX')}INVOICES`
 const ORDER_NAME = `${Vue.env.get('STORAGE_PREFIX')}ORDER`
+const OPENID_NAME = `${Vue.env.get('STORAGE_PREFIX')}OPENID`
+const SOURCE_NAME = `${Vue.env.get('STORAGE_PREFIX')}SOURCETYPE`
 
 export default {
   getAddress () {
@@ -41,5 +43,19 @@ export default {
   setOrder (order) {
     window.localStorage.setItem(ORDER_NAME, window.JSON.stringify(order))
     return this.getOrder()
+  },
+  getOpenid () {
+    return window.localStorage.getItem(OPENID_NAME) || ''
+  },
+  setOpenid (openid) {
+    window.localStorage.setItem(OPENID_NAME, openid)
+    return this.getOpenid()
+  },
+  getSource () {
+    return window.localStorage.getItem(SOURCE_NAME) || 9
+  },
+  setSource (source) {
+    window.localStorage.setItem(SOURCE_NAME, source)
+    return this.getSource()
   }
 }

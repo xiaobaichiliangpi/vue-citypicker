@@ -3,7 +3,9 @@ import local from '../local'
 import {
   UPDATE_AUTH_TOKEN,
   CLEAR_AUTH_TOKEN,
-  UPDATE_CITY } from '../mutation-types'
+  UPDATE_CITY,
+  UPDATE_OPENID,
+  UPDATE_SOURCETYPE } from '../mutation-types'
 
 export default {
   [UPDATE_AUTH_TOKEN] (state, token) {
@@ -14,5 +16,11 @@ export default {
   },
   [UPDATE_CITY] (state, city) {
     state.city = local.setCity(city)
+  },
+  [UPDATE_OPENID] (state, openid) {
+    state.openid = local.setOpenid(openid)
+  },
+  [UPDATE_SOURCETYPE] (state, SourceType) {
+    state.SourceType = local.setSource(SourceType)
   }
 }

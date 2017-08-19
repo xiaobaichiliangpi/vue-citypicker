@@ -13,12 +13,16 @@ const state = {
    * @property {string} token.refresh_token    - refresh token
    */
   token: tokenStorage.get(),
-  city: local.getCity()
+  city: local.getCity(),
+  openid: local.getOpenid(),
+  SourceType: local.getSource()
 }
 
 const getters = {
   city: state => state.city,
-  token: state => state.token
+  token: state => state.token,
+  openid: state => state.openid,
+  SourceType: state => state.SourceType
 }
 
 export default {
