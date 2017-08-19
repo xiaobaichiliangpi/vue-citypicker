@@ -141,7 +141,9 @@
       },
       async qualificationList () {
         const response = await qualificationList()
-        response.data.Data && (this.qualifications = response.data.Data.InvoiceQualifications)
+        response.data.Data && (this.qualifications = response.data.Data.InvoiceQualifications.filter(item => {
+          return item.AuditStatus !== 2
+        }))
       },
       submit () {
         if (this.needInvoices) {
