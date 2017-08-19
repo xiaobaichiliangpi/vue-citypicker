@@ -45,6 +45,11 @@
         </div>
         </mn-section-btn>
       </mn-section>
+      <div class="register">
+        <a href="https://wechat.34580.com/register/index">
+          没有账号? 免费注册
+        </a>
+      </div>
     </mn-form>
   </mn-modal>
 </template>
@@ -199,9 +204,9 @@
 
     .mn-card-item {
       border: 1px solid #cdcdcd;
-      margin-bottom: 0.75rem;
+      margin-bottom: 1rem;
       border-radius: 2rem;
-      padding: 0.75rem 1rem;
+      padding: 0.5rem 1rem;
     }
   }
 
@@ -211,6 +216,15 @@
 
   .mn-btn.is-primary {
     border-radius: 2rem;
+  }
+
+  .register {
+    text-align: center;
+
+    a {
+      color: #49ab34;
+      font-size: 0.875rem;
+    }
   }
 }
 </style>
