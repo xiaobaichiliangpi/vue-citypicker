@@ -62,5 +62,29 @@ export default [
       title: '提货卡订单下单结果'
     },
     component: resolve => { require(['../components/order/orderResult'], resolve) }
+  },
+  {
+    name: 'orderExpress',
+    path: '/order/express/:orderId',
+    meta: {
+      title: '配送信息'
+    },
+    component: resolve => { require(['../components/order/orderExpress'], resolve) }
+  },
+  {
+    name: 'orderInvoice',
+    path: '/order/invoice/:orderId',
+    meta: {
+      title: '发票信息'
+    },
+    component: resolve => { require(['../components/order/orderInvoice'], resolve) }
+  },
+  {
+    name: 'orderProduct',
+    path: '/order/product/:orderId',
+    meta: {
+      title: '商品清单'
+    },
+    component: resolve => { require(['../components/order/orderProduct'], resolve) }
   }
 ]

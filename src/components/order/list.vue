@@ -1,12 +1,12 @@
 <template>
-  <mn-scroller @bottom="onScrollBottom">
+  <mn-scroller @bottom="onScrollBottom" class="orders">
     <mn-container>
       <mn-card v-for="(item, key) in orders" :key="key" v-if="orders">
          <mn-card-item >
           <mn-card-prefix>
             <mn-label>订单状态</mn-label>
           </mn-card-prefix>
-          <mn-card-body>
+          <mn-card-body class="pay-result">
             {{item.orderStatus === 2 ? '支付成功' : '未支付'}}
           </mn-card-body>
         </mn-card-item>
@@ -23,26 +23,34 @@
             <mn-label>下单时间</mn-label>
           </mn-card-prefix>
           <mn-card-body>
-          {{new Date(item.createTime).toLocaleString()}}
+          {{formatDate(item.createTime)}}
           </mn-card-body>
         </mn-card-item>
-        <mn-card-item type="link">
+        <mn-card-item type="link" @click="$router.push({name: 'orderExpress', params: { orderId: item.pickupcardOrderId }})">
           <mn-card-prefix>
             <mn-label>配送信息</mn-label>
           </mn-card-prefix>
-          <mn-card-body>
+          <mn-card-body style="color: #f75121;">
           {{item.deliverStatus === 0 ? '未发货' : '已发货'}}
           </mn-card-body>
         </mn-card-item>
-        <mn-card-item type="link">
+        <mn-card-item type="link" @click="$router.push({name: 'orderInvoice', params: { orderId: item.pickupcardOrderId }})" v-if="item.receiptBean">
           <mn-card-prefix>
             <mn-label>发票信息</mn-label>
           </mn-card-prefix>
           <mn-card-body>
-          {{!item.receiptBean ? '不需要发票' : item.receiptBean.receiptType === 0 ? '增值税普通发票' : '增值税专用发票'}}
+          {{item.receiptBean.receiptType === 0 ? '增值税普通发票' : '增值税专用发票'}}
           </mn-card-body>
         </mn-card-item>
-        <mn-card-item type="link" class="list-card-item" style="padding-top: 2rem;">
+        <mn-card-item>
+          <mn-card-prefix>
+            <mn-label>发票信息</mn-label>
+          </mn-card-prefix>
+          <mn-card-body>
+          不需要发票
+          </mn-card-body>
+        </mn-card-item>
+        <mn-card-item type="link" class="list-card-item" style="padding-top: 2rem;" @click="$router.push({name: 'orderProduct', params: { orderId: item.pickupcardOrderId }})">
           <mn-card-prefix>
             <mn-label>购买清单</mn-label>
           </mn-card-prefix>
@@ -52,8 +60,8 @@
                 <img :src="product.imagePath">
               </div>
             </div>
-            <div class="buyed-info">
-              <div>
+            <div class="buyed-info" style="padding-left: 0.5rem;">
+              <div style="color: #f75121;font-size: 1.1rem;">
                 ¥{{item.totalPrice}}
               </div>
               <div>共{{item.totalnum}}件</div>
@@ -121,6 +129,15 @@
           console.log(error)
           this.loading = false
         })
+      },
+      formatDate (date) {
+        let currentDate = new Date(date)
+        let d = currentDate.getDate()
+        let m = currentDate.getMonth() + 1
+        let y = currentDate.getFullYear()
+        d = (d > 9 ? d : '0' + d)
+        m = (m > 9 ? m : '0' + m)
+        return `${y}-${m}-${d}`
       }
     },
     created () {
@@ -169,5 +186,11 @@
 
 .mn-label  {
   color: #666;
+}
+
+.orders {
+  .pay-result {
+
+  }
 }
 </style>
