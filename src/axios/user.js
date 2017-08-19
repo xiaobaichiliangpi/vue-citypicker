@@ -27,6 +27,8 @@ export function sendCommission (data = {}) {
     method: 'POST',
     url: `/Invoices/SendPowerOfAttorneyLink`,
     data: {
+      CustomerGuid: store.getters.token.CustomerGuid,
+      SourceType: store.getters.SourceType,
       ...data
     }
   })

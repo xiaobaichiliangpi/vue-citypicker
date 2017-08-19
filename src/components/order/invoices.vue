@@ -14,7 +14,7 @@
 
       <div v-if="needInvoices">
         <mn-section class="invoicesType">
-          <h2>发票类型</h2>
+          <h2 style="font-size: 1rem;background: #fff;padding-left: 1rem;">发票类型</h2>
           <mn-card>
             <mn-card-item>
               <mn-card-body>
@@ -50,7 +50,7 @@
         </mn-section>
 
         <mn-section v-else>
-          <h2>开票单位</h2>
+          <h2 style="font-size: 1rem;padding-left: 1rem;margin-bottom: 0.5rem;">开票单位</h2>
           <mn-card>
             <mn-card-item
               type="link"
@@ -68,7 +68,7 @@
               </mn-card-body>
             </mn-card-item>
             <mn-card-item @click.native="$router.push({name: 'createInvoices'})">
-              <mn-card-body>
+              <mn-card-body style="text-align: center;">
                 <mn-icon :name="icons.plus" style="color: #999;"></mn-icon>
                 添加单位
               </mn-card-body>
@@ -176,6 +176,10 @@
       } else {
         this.activeInvoices = this.invoices.content
       }
+    },
+    beforeDestroy () {
+      if (this.alertLayer) this.alertLayer.destroy()
+      if (this.loadingmask) this.loadingmask.destroy()
     }
   }
 </script>

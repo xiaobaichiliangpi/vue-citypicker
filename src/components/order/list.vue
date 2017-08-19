@@ -70,6 +70,7 @@
 
 <script>
   import { orderList } from '../../axios/product'
+  import { mapGetters } from 'vuex'
 
   export default {
     components: {
@@ -87,6 +88,9 @@
       }
     },
     computed: {
+      ...mapGetters({
+        token: 'token'
+      })
     },
     methods: {
       /**
@@ -97,10 +101,10 @@
         if (this.loading || !this.nextHref) return
 
         this.loading = true
-
         try {
+          this.models.customerGuid = this.token.CustomerGuid
           const response = await orderList(this.models)
-          this.orders = [...(this.orders || []), ...response.data._embedded.pickupcardOrders]
+          response.data._embedded && (this.orders = [...(this.orders || []), ...response.data._embedded.pickupcardOrders])
           this.nextHref = response.data._links.next
           this.models.page += 1
           this.loading = false

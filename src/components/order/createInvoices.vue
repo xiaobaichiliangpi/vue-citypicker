@@ -60,7 +60,7 @@
             </mn-card-prefix>
             <mn-card-body>
               <mn-input v-model="models.TaxNumber"
-               placeholder="单位或公司全称"></mn-input>
+               placeholder="纳税人识别号或者社会信用代码"></mn-input>
             </mn-card-body>
           </mn-card-item>
           <mn-card-item>
@@ -130,6 +130,10 @@
       }
     },
     created () {
+    },
+    beforeDestroy () {
+      if (this.alertLayer) this.alertLayer.destroy()
+      if (this.loadingmask) this.loadingmask.destroy()
     }
   }
 </script>

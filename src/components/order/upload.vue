@@ -63,6 +63,7 @@
 <script>
   import { mapGetters } from 'vuex'
   import { uploadImage, applyQualification } from '../../axios/user'
+  import LoadingMask from 'vue-human/utils/LoadingMask'
 
   export default {
     computed: {
@@ -92,7 +93,11 @@
             ByteBinary: ByteBinary,
             TypeName: file.name
           }
+          _self.loadingmask = LoadingMask.create({
+          }).show()
+
           uploadImage(data).then(response => {
+            if (_self.loadingmask) _self.loadingmask.destroy()
             _self[type] = response.data.Data
           })
         }
@@ -100,6 +105,7 @@
       submit () {
         this.applyQualification()
         .then(response => {
+          if (this.loadingmask) this.loadingmask.destroy()
           this.$router.go(-2)
         })
       },
@@ -108,6 +114,8 @@
        * @return {[type]} [description]
        */
       async applyQualification () {
+        this.loadingmask = LoadingMask.create({
+        }).show()
         const response = await applyQualification({
           ...this.qualification,
           BusinessLicenseImage: this.BusinessLicenseImage,
@@ -115,6 +123,9 @@
         })
         return response
       }
+    },
+    beforeDestroy () {
+      if (this.loadingmask) this.loadingmask.destroy()
     }
   }
 </script>

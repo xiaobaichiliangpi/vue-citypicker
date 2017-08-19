@@ -45,6 +45,14 @@ export default {
     return this.getOrder()
   },
   getOpenid () {
+    const url = window.location.href
+    if (window.localStorage.getItem(OPENID_NAME) && url.indexOf('#') > -1) {
+      const startIndex = url.indexOf('.com/') + 5
+      const endIndex = url.indexOf('#/')
+      if (startIndex !== endIndex) {
+        window.location.href = url.slice(0, startIndex) + url.slice(endIndex, url.length)
+      }
+    }
     return window.localStorage.getItem(OPENID_NAME) || ''
   },
   setOpenid (openid) {

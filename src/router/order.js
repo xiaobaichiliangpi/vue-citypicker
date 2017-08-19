@@ -1,7 +1,7 @@
 export default [
   {
     name: 'orderSubmit',
-    path: '/order/submit',
+    path: '/orderSubmit',
     meta: {
       title: '提交订单'
     },

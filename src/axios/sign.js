@@ -1,7 +1,7 @@
 import axios from './axios'
 import { encryptDES } from '../utils/encryptDES'
-import env from '../env'
-// import store from '../store'
+// import env from '../env'
+import store from '../store'
 
 export function signIn ({ username, password }) {
   return axios({
@@ -10,7 +10,7 @@ export function signIn ({ username, password }) {
     data: {
       Phone: username,
       PassWord: encryptDES(password, '8D54E5D0'),
-      sourcetype: env.get('APP_TYPE')
+      sourcetype: store.getters.SourceType
     }
   })
 }

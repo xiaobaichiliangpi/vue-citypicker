@@ -1,95 +1,97 @@
 <template>
-  <mn-scroller>
-    <mn-container class="order">
-      <div class="order-address">
-        <mn-card>
-          <mn-card-item type="link" @click="$router.push({name: 'orderAddress'})">
-            <mn-card-body>
-              <p>
-                收货信息
-                <span v-if="address">{{address.consignee}}</span>
-                <span v-if="address">{{address.consigneePhonenum}}</span>
-              </p>
-              <p class="order-address-info">
-                {{address && address.consigneeAddress || '请填写收货地址'}}
-              </p>
-            </mn-card-body>
-          </mn-card-item>
-        </mn-card>
-      </div>
+  <div>
+    <mn-scroller>
+      <mn-container class="order">
+        <div class="order-address">
+          <mn-card>
+            <mn-card-item type="link" @click="$router.push({name: 'orderAddress'})">
+              <mn-card-body>
+                <p>
+                  收货信息
+                  <span v-if="address">{{address.consignee}}</span>
+                  <span v-if="address">{{address.consigneePhonenum}}</span>
+                </p>
+                <p class="order-address-info">
+                  {{address && address.consigneeAddress || '请填写收货地址'}}
+                </p>
+              </mn-card-body>
+            </mn-card-item>
+          </mn-card>
+        </div>
 
-      <div class="order-products">
-        <h3>商品清单</h3>
-        <mn-card>
-          <mn-card-item
-            class="order-products-item"
-            v-for="(item, key) in order"
-            :key="key">
-            <mn-card-prefix>
-              <div class="order-image">
-                <img src="https://picpro-sz.34580.com/sz/ImageUrl/41911/480.png">
-              </div>
-            </mn-card-prefix>
-            <mn-card-body>
-              <div class="order-products-title">
-                {{item.productName}}
-              </div>
-              <div class="order-products-count">
-                <div>¥{{item.price}}</div>
-                <div>×{{item.saledNum}}</div>
-              </div>
-            </mn-card-body>
-          </mn-card-item>
-          <mn-card-item class="order-info">
-            <mn-card-body>
-              <p>¥{{totalAmount}}</p>
-              <small>共{{totalNum}}件</small>
-            </mn-card-body>
-          </mn-card-item>
-        </mn-card>
-      </div>
+        <div class="order-products">
+          <h3>商品清单</h3>
+          <mn-card>
+            <mn-card-item
+              class="order-products-item"
+              v-for="(item, key) in order"
+              :key="key">
+              <mn-card-prefix>
+                <div class="order-image">
+                  <img src="https://picpro-sz.34580.com/sz/ImageUrl/41911/480.png">
+                </div>
+              </mn-card-prefix>
+              <mn-card-body>
+                <div class="order-products-title">
+                  {{item.productName}}
+                </div>
+                <div class="order-products-count">
+                  <div>¥{{item.price}}</div>
+                  <div>×{{item.saledNum}}</div>
+                </div>
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item class="order-info">
+              <mn-card-body>
+                <p>¥{{totalAmount}}</p>
+                <small>共{{totalNum}}件</small>
+              </mn-card-body>
+            </mn-card-item>
+          </mn-card>
+        </div>
 
-      <div class="order-invoices">
-        <mn-card>
-          <mn-card-item type="link" @click="$router.push({name: 'orderInvoices'})">
-            <mn-card-body>
-              <div>
-                发票
-              </div>
-              <div>
-                {{invoices.needInvoices ? invoices.invoicesLabel : '不需要发票'}}
-              </div>
-            </mn-card-body>
-          </mn-card-item>
-        </mn-card>
-      </div>
+        <div class="order-invoices">
+          <mn-card>
+            <mn-card-item type="link" @click="$router.push({name: 'orderInvoices'})">
+              <mn-card-body>
+                <div>
+                  发票
+                </div>
+                <div>
+                  {{invoices.needInvoices ? invoices.invoicesLabel : '不需要发票'}}
+                </div>
+              </mn-card-body>
+            </mn-card-item>
+          </mn-card>
+        </div>
 
-      <div class="order-paytype">
-        <h3>支付方式</h3>
-        <mn-card>
-          <mn-card-item v-if="checkWx()">
-            <mn-card-body>
-              <p>微信支付</p>
-              <mn-icon :name="icons.check"></mn-icon>
-            </mn-card-body>
-          </mn-card-item>
-          <mn-card-item v-else>
-            <mn-card-body>
-              <p>支付宝支付</p>
-              <mn-icon :name="icons.check"></mn-icon>
-            </mn-card-body>
-          </mn-card-item>
-        </mn-card>
-      </div>
+        <div class="order-paytype">
+          <h3>支付方式</h3>
+          <mn-card>
+            <mn-card-item v-if="checkWx()">
+              <mn-card-body>
+                <p>微信支付</p>
+                <mn-icon :name="icons.check"></mn-icon>
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item v-else>
+              <mn-card-body>
+                <p>支付宝支付</p>
+                <mn-icon :name="icons.check"></mn-icon>
+              </mn-card-body>
+            </mn-card-item>
+          </mn-card>
+        </div>
 
-      <div class="order-submit-btn">
-        <mn-btn theme="primary" block @click="onClickSubmit">立即支付</mn-btn>
-      </div>
-      <div class="alipaysubmit" v-html="aliPayHtml" v-if="aliPayHtml">
-      </div>
+        <div class="alipaysubmit" v-html="aliPayHtml" v-if="aliPayHtml">
+        </div>
 
-    </mn-container>
-  </mn-scroller>
+      </mn-container>
+    </mn-scroller>
+    <div class="order-submit-btn">
+      <mn-btn theme="primary" block @click="onClickSubmit">立即支付</mn-btn>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -97,6 +99,7 @@
   import { submitOrder } from '../../axios/product'
   import { wxPay, aliPay } from '../../axios/user'
   import Alert from 'vue-human/utils/Alert'
+  import LoadingMask from 'vue-human/utils/LoadingMask'
 
   export default {
     components: {
@@ -106,7 +109,8 @@
         icons: {
           check: require('vue-human-icons/js/ios/checkmark-empty')
         },
-        aliPayHtml: ''
+        aliPayHtml: '',
+        orderId: undefined
       }
     },
     computed: {
@@ -150,17 +154,28 @@
           return
         }
 
+        this.loadingmask = LoadingMask.create({
+        }).show()
+
         this.submitOrder()
         .then(response => {
           const order = response.data
+          this.$store.commit('UPDATE_ORDER', [])
 
           if (this.checkWx()) {
             this.wxPay(order)
           } else {
             this.aliPay(order)
           }
+        }).catch(error => {
+          console.log(error)
+          if (this.loadingmask) this.loadingmask.destroy()
         })
       },
+      /**
+       * 提交订单
+       * @return {[type]} [description]
+       */
       async submitOrder () {
         let data = {
           ...this.address,
@@ -186,9 +201,19 @@
           OpenId: this.openid,
           Ip: window.localStorage.getItem('LOCALIP')
         }
+
+        this.orderId = order.pickupcardOrderId
         const response = await wxPay(data)
-        this.wxPayData = response.data.Data.WxPay.prepay
-        this.wxPayBridge()
+        if (this.loadingmask) this.loadingmask.destroy()
+        if (response.data.Error !== 0) {
+          this.alertLayer = Alert.create({
+            title: '拉取支付失败~',
+            cancelText: '知道了'
+          }).show()
+        } else {
+          this.wxPayData = response.data.Data.WxPay.prepay
+          this.wxPayBridge()
+        }
       },
       async aliPay (order) {
         const data = {
@@ -199,6 +224,13 @@
         }
 
         const response = await aliPay(data)
+        if (this.loadingmask) this.loadingmask.destroy()
+        if (response.data.Error !== 0) {
+          this.alertLayer = Alert.create({
+            title: '拉取支付失败~',
+            cancelText: '知道了'
+          }).show()
+        }
         this.aliPayHtml = response.data.Data.PreSignStr
 
         this.$nextTick(() => {
@@ -227,16 +259,22 @@
       onBridgeReady () {
         WeixinJSBridge.invoke(
           'getBrandWCPayRequest', this.wxPayData,
-          function (res) {
+          res => {
             if (res.err_msg == "get_brand_wcpay_request:ok" ) {
-              window.alert('支付成功')
+              this.$router.push({name: 'orderResult', params: { orderId: this.orderId }})
             }
          }
         )
       }
     },
+    mounted () {
+      if (this.order && this.order.length <= 0) {
+        this.$router.push({name: 'homepage'})
+      }
+    },
     beforeDestroy () {
       if (this.alertLayer) this.alertLayer.destroy()
+      if (this.loadingmask) this.loadingmask.destroy()
     }
   }
 </script>

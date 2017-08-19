@@ -123,7 +123,8 @@
           this.$emit('successSign')
           this.showModal = false
         } catch (error) {
-          this.messageLayer = Message.create({ type: 'error', message: error.message }).show()
+          this.showModal = false
+          // this.messageLayer = Message.create({ type: 'error', message: error.message }).show()
         }
 
         this.setFormLoading(false)

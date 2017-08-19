@@ -77,7 +77,11 @@
         consigneePhonenum: {
           required,
           phone () {
-            return /^1[3|4|5|7|8][0-9]{9}$/.test(this.models.consigneePhonenum)
+            if (this.models.consigneePhonenum) {
+              return /^1[3|4|5|7|8][0-9]{9}$/.test(this.models.consigneePhonenum)
+            } else {
+              return true
+            }
           }
         },
         consigneeAddress: {
@@ -111,6 +115,10 @@
           this.models[key] = this.address[key]
         })
       }
+    },
+    beforeDestroy () {
+      if (this.alertLayer) this.alertLayer.destroy()
+      if (this.loadingmask) this.loadingmask.destroy()
     }
   }
 </script>

@@ -4,8 +4,11 @@
     <mn-scroller @bottom="onScrollBottom">
       <mn-container>
         <div class="home-header">
-          <span class="home-header-btn" @click="pushOrder">我的提货卡订单</span>
+          <div @click="pushOrder">
+            <img src="http://static.34580.cn/cn/min/touch/c/activity/wechat/ToB%20Card/banner1.jpg">
+          </div>
         </div>
+        <div @click="loginOut">退出登录</div>
         <div style="word-wrap: break-word;">{{JSON.stringify($route.query)}}</div>
         <div style="word-wrap: break-word;">本地token:{{JSON.stringify(token)}}</div>
         <div style="word-wrap: break-word;">openid:{{openid}}</div>
@@ -27,7 +30,7 @@
                 <span class="price-main">{{item.price}}</span>
               </div>
               <div class="products-action">
-                <mn-counter v-model="item.saledNum" :min="0" v-if="item.saledNum > 0"></mn-counter>
+                <mn-counter v-model="item.saledNum" :min="0" v-if="item.saledNum > 0" :max="99"></mn-counter>
                 <div class="cart-btn" v-else @click="addToCart(item)">
                   <mn-icon :name="icons.cart" :scale="0.8"></mn-icon>
                 </div>
@@ -137,7 +140,7 @@
         this.loading = true
         const response = await productList(this.models)
         if (response.data._embedded) {
-          this.products = [...(this.products || []), ...response.data._embedded.pickupcardProducts]
+          response.data._embedded && (this.products = [...(this.products || []), ...response.data._embedded.pickupcardProducts])
           this.nextHref = response.data._links.next
           this.models.page += 1
         } else {
@@ -194,16 +197,33 @@
             })
           }
         }
+      },
+      loginOut () {
+        this.$store.commit('UPDATE_CITY', {})
+        this.$store.commit('CLEAR_AUTH_TOKEN')
+        this.$store.commit('UPDATE_ADDRESS', {})
+        this.$store.commit('UPDATE_ORDER', [])
+        this.$store.commit('UPDATE_INVOICES', {})
+        this.$store.commit('UPDATE_QUALIFICATION', {})
       }
     },
     mounted () {
+      if (/Android/gi.test(navigator.userAgent)) {
+        window.addEventListener('resize', function () {
+          if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+            window.setTimeout(function () {
+              document.activeElement.scrollIntoViewIfNeeded()
+            }, 0)
+          }
+        })
+      }
+
       // 检查微信, 非微信的状态下(app) 将token信息更新
       if (!this.checkWx()) {
         const token = {
           CustomerGuid: this.$route.query.token,
           AccessToken: this.$route.query.AccessToken
         }
-
         this.$store.commit('UPDATE_AUTH_TOKEN', token)
       } else {
         if ((!this.getOpenId() && !this.openid) || this.openid === 'undefined') {
@@ -229,6 +249,13 @@
     watch: {
       products () {
         this.setSelectedProduct()
+      },
+      '$route.query' (val) {
+        const token = {
+          CustomerGuid: val.token,
+          AccessToken: val.AccessToken
+        }
+        this.$store.commit('UPDATE_AUTH_TOKEN', token)
       }
     }
   }
@@ -349,21 +376,11 @@
   }
 
   .home-header {
-    height: 10rem;
-    background: #ccc;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 2rem;
     margin-bottom: 1rem;
 
-    &-btn {
-      display: inline-block;
-      background: #fff;
-      padding: 0 1rem;
-      line-height: 1.8rem;
-      height: 1.8rem;
-      border-radius: .9rem;
+    img {
+      display: block;
+      width: 100%;
     }
   }
 </style>
