@@ -122,7 +122,7 @@
       checkSign () {
         if (this.token.AccessToken && this.token.CustomerGuid) return true
 
-        if (this.checkWx()) {
+        if (!this.checkWx()) {
           this.toggleModal = !this.toggleModal
         } else {
           window.location.href = 'http://m.34580.com/login/index'
@@ -201,6 +201,13 @@
       loginOut () {
         this.$store.commit('UPDATE_CITY', {})
         this.$store.commit('CLEAR_AUTH_TOKEN')
+        this.clearLocal()
+      },
+      /**
+       * 清空本地存储
+       * @return {[type]} [description]
+       */
+      clearLocal () {
         this.$store.commit('UPDATE_ADDRESS', {})
         this.$store.commit('UPDATE_ORDER', [])
         this.$store.commit('UPDATE_INVOICES', {})
@@ -256,6 +263,9 @@
           AccessToken: val.AccessToken
         }
         this.$store.commit('UPDATE_AUTH_TOKEN', token)
+      },
+      'token.CustomerGuid' (val) {
+        this.clearLocal()
       }
     }
   }
