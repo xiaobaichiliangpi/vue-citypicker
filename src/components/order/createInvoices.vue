@@ -166,7 +166,7 @@
         },
         CompanyAddress: {
           required,
-          minLength: minLength(4),
+          minLength: minLength(2),
           maxLength: maxLength(200)
         },
         CompanyPhone: {
