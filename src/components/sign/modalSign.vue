@@ -21,7 +21,7 @@
           </mn-card-item>
           <mn-card-item>
             <mn-card-body>
-              <mn-input type="password" v-model="models.password" placeholder="请输入登录账号"></mn-input>
+              <mn-input type="password" v-model="models.password" placeholder="请输入密码"></mn-input>
             </mn-card-body>
           </mn-card-item>
         </mn-card>
@@ -189,7 +189,7 @@
 
 <style lang="scss" scoped>
 .sign-modal {
-  padding: 0 0 1.5rem;
+  padding: 0 0 2rem;
 
   h1 {
     background: #49ab34;
