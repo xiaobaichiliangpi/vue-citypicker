@@ -315,7 +315,7 @@
       .mn-counter-btn {
         width: 1.75rem;
         height: 1.75rem;
-        border-radius: 50%;
+        border-radius: 50% !important;
 
         &:not(.is-disabled) {
           color: #f05423;
