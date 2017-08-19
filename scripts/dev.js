@@ -5,6 +5,6 @@ module.exports = new WebpackDevRunner({
     '/sz': 'http://192.168.100.6:85',
     '/sh': 'http://192.168.100.6:85',
     '/wx': 'http://192.168.100.6:85',
-    '/pickupcard': 'http://10.1.3.18:9011'
+    '/pickupcard': 'http://sy-suz-srv31.suiyi.com.cn:9010'
   }
 }).run()
