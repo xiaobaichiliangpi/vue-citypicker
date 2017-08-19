@@ -64,6 +64,7 @@
   import { mapGetters } from 'vuex'
   import { uploadImage, applyQualification } from '../../axios/user'
   import LoadingMask from 'vue-human/utils/LoadingMask'
+  import Alert from 'vue-human/utils/Alert'
 
   export default {
     computed: {
@@ -106,7 +107,15 @@
         this.applyQualification()
         .then(response => {
           if (this.loadingmask) this.loadingmask.destroy()
-          this.$router.go(-2)
+          if (response.data.Error === 0) {
+            this.$store.commit('UPDATE_QUALIFICATION', [])
+            this.$router.go(-2)
+          } else {
+            this.alertLayer = Alert.create({
+              title: response.data.Message,
+              cancelText: '知道了'
+            }).show().on()
+          }
         })
       },
       /**

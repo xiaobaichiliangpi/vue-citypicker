@@ -67,7 +67,7 @@
                 <p>纳税人编号: {{item.TaxNumber}}</p>
               </mn-card-body>
             </mn-card-item>
-            <mn-card-item @click.native="$router.push({name: 'createInvoices'})">
+            <mn-card-item @click.native="addQua">
               <mn-card-body style="text-align: center;">
                 <mn-icon :name="icons.plus" style="color: #999;"></mn-icon>
                 添加单位
@@ -133,6 +133,10 @@
       }
     },
     methods: {
+      addQua () {
+        this.$router.push({name: 'createInvoices'})
+        this.$store.commit('UPDATE_QUALIFICATION', {})
+      },
       onSelectType (item) {
         this.activeType = item.value
       },
