@@ -114,7 +114,8 @@
         address: 'address',
         invoices: 'invoices',
         order: 'order',
-        token: 'token'
+        token: 'token',
+        openid: 'openid'
       }),
       totalAmount () {
         let total = 0
@@ -154,7 +155,7 @@
           const order = response.data
 
           if (this.checkWx()) {
-
+            this.wxPay(order)
           } else {
             this.aliPay(order)
           }
@@ -178,16 +179,23 @@
         const response = await submitOrder(data)
         return response
       },
-      async wxPay () {
-        const response = await wxPay()
-        console.log(response)
+      async wxPay (order) {
+        const data = {
+          Amount: order.totalPrice,
+          OrderId: order.pickupcardOrderId,
+          OpenId: this.openid,
+          Ip: window.localStorage.getItem('LOCALIP')
+        }
+        const response = await wxPay(data)
+        this.wxPayData = response.data.Data.WxPay.prepay
+        this.wxPayBridge()
       },
       async aliPay (order) {
         const data = {
           Amount: order.totalPrice,
           OrderId: order.pickupcardOrderId,
-          ReturnUrl: `${location.origin}/#/order/result/${order.pickupcardOrderId}`,
-          ShowUrl: `${location.origin}/#/order/result/${order.pickupcardOrderId}`
+          ReturnUrl: `${window.location.origin}/#/order/result/${order.pickupcardOrderId}`,
+          ShowUrl: `${window.location.origin}/#/order/result/${order.pickupcardOrderId}`
         }
 
         const response = await aliPay(data)
@@ -202,6 +210,29 @@
       },
       submitToAli () {
         document.forms['alipaysubmit'].submit()
+      },
+      wxPayBridge () {
+        /* eslint-disable */
+        if (typeof WeixinJSBridge === "undefined") {
+          if( document.addEventListener ) {
+            document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady, false)
+          } else if (document.attachEvent) {
+            document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady)
+            document.attachEvent('onWeixinJSBridgeReady', this.onBridgeReady)
+          }
+        } else {
+          this.onBridgeReady()
+        }
+      },
+      onBridgeReady () {
+        WeixinJSBridge.invoke(
+          'getBrandWCPayRequest', this.wxPayData,
+          function (res) {
+            if (res.err_msg == "get_brand_wcpay_request:ok" ) {
+              window.alert('支付成功')
+            }
+         }
+        )
       }
     },
     beforeDestroy () {

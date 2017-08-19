@@ -1,5 +1,5 @@
 import axios from './axios'
-import Vue from 'vue'
+// import Vue from 'vue'
 import store from '../store'
 
 export function cityList () {
@@ -17,7 +17,7 @@ export function uploadImage (data = {}) {
       ByteBinary: data.ByteBinary,
       TypeName: data.TypeName,
       CustomerGuid: store.getters.token.CustomerGuid,
-      SourceType: Vue.env.get('APP_TYPE')
+      SourceType: store.getters.SourceType
     }
   })
 }
@@ -39,7 +39,7 @@ export function applyQualification (data = {}) {
     data: {
       ...data,
       CustomerGuid: store.getters.token.CustomerGuid,
-      SourceType: Vue.env.get('APP_TYPE')
+      SourceType: store.getters.SourceType
     }
   })
 }
@@ -59,7 +59,7 @@ export function wxPay (data = {}) {
       PlatFormType: 9,
       BusinessType: 4,
       CustomerGuid: store.getters.token.CustomerGuid,
-      SourceType: Vue.env.get('APP_TYPE'),
+      SourceType: store.getters.SourceType,
       ...data
     }
   })
@@ -73,7 +73,7 @@ export function aliPay (data = {}) {
       PlatFormType: 9,
       BusinessType: 4,
       CustomerGuid: store.getters.token.CustomerGuid,
-      SourceType: Vue.env.get('APP_TYPE'),
+      SourceType: store.getters.SourceType,
       ...data
     }
   })

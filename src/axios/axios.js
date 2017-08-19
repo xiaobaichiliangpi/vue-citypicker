@@ -1,4 +1,4 @@
-import Vue from 'vue'
+// import Vue from 'vue'
 import axios from 'axios'
 import store from '../store'
 import env from '../env'
@@ -14,11 +14,11 @@ export default function (config) {
       params: {
         accesstoken: store.getters.token.AccessToken,
         customerguid: store.getters.token.CustomerGuid,
-        sourcetype: Vue.env.get('APP_TYPE')
+        sourcetype: store.getters.SourceType
       },
       data: {
         CustomerGuid: store.getters.token.CustomerGuid,
-        SourceType: Vue.env.get('APP_TYPE')
+        SourceType: store.getters.SourceType
       }
     },
     ...config

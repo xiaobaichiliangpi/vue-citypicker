@@ -6,6 +6,9 @@
         <div class="home-header">
           <span class="home-header-btn" @click="pushOrder">我的提货卡订单</span>
         </div>
+        <div style="word-wrap: break-word;">{{JSON.stringify($route.query)}}</div>
+        <div style="word-wrap: break-word;">本地token:{{JSON.stringify(token)}}</div>
+        <div style="word-wrap: break-word;">openid:{{openid}}</div>
         <div class="products">
           <div
             class="products-item"
@@ -34,15 +37,15 @@
           <div class="loading-text" v-if="loading"><mn-loading-icon></mn-loading-icon>正在加载中</div>
           <div class="loading-text" v-if="!nextHref">没有更多了</div>
         </div>
-        <div class="cart-bottom">
-          <div class="cart-info">
-            <div class="cart-total">小计: ¥{{totalAmount}}</div>
-            <div class="cart-count">已选{{products && products.filter(item => item.saledNum > 0).length}}种, 共{{totalNum}}件</div>
-          </div>
-          <div class="cart-btn" @click="submitOrder" :class="[{'is-disabled': totalAmount <= 0}]">确认购买({{totalNum}})</div>
-        </div>
       </mn-container>
     </mn-scroller>
+    <div class="cart-bottom">
+      <div class="cart-info">
+        <div class="cart-total">小计: ¥{{totalAmount}}</div>
+        <div class="cart-count">已选{{products && products.filter(item => item.saledNum > 0).length}}种, 共{{totalNum}}件</div>
+      </div>
+      <div class="cart-btn" @click="submitOrder" :class="[{'is-disabled': totalAmount <= 0}]">确认购买({{totalNum}})</div>
+    </div>
   </div>
 </template>
 
@@ -76,7 +79,8 @@
     computed: {
       ...mapGetters({
         token: 'token',
-        selectedProducts: 'order'
+        selectedProducts: 'order',
+        openid: 'openid'
       }),
       totalAmount () {
         let total = 0
@@ -113,12 +117,12 @@
         // this.submitOrder()
       },
       checkSign () {
-        if (this.token.AccessToken) return true
+        if (this.token.AccessToken && this.token.CustomerGuid) return true
 
         if (this.checkWx()) {
           this.toggleModal = !this.toggleModal
         } else {
-          window.open('http://m.34580.com/login/index', '_self')
+          window.location.href = 'http://m.34580.com/login/index'
         }
 
         return false
@@ -132,9 +136,15 @@
 
         this.loading = true
         const response = await productList(this.models)
-        this.products = [...(this.products || []), ...response.data._embedded.pickupcardProducts]
-        this.nextHref = response.data._links.next
-        this.models.page += 1
+        if (response.data._embedded) {
+          this.products = [...(this.products || []), ...response.data._embedded.pickupcardProducts]
+          this.nextHref = response.data._links.next
+          this.models.page += 1
+        } else {
+          this.products = []
+          this.nextHref = false
+        }
+
         this.loading = false
       },
       /**
@@ -163,26 +173,54 @@
         if (this.checkSign()) this.$router.push({name: 'orderList'})
       },
       checkWx () {
-        return !/micromessenger/.test(navigator.userAgent.toLowerCase())
+        return /micromessenger/.test(navigator.userAgent.toLowerCase())
+      },
+      getOpenId () {
+        const url = window.location.href
+
+        if (url.includes('openid')) {
+          const startIndex = url.indexOf('.com/') + 5
+          const endIndex = url.indexOf('#/')
+
+          if (startIndex !== endIndex) {
+            const params = url.slice(startIndex, endIndex)
+            params.split('&').forEach(item => {
+              let param = item.split('=')
+
+              if (param[0].indexOf('openid') > -1) {
+                this.$store.commit('UPDATE_OPENID', param[1])
+                return true
+              }
+            })
+          }
+        }
       }
     },
     mounted () {
       // 检查微信, 非微信的状态下(app) 将token信息更新
       if (!this.checkWx()) {
         const token = {
-          CustomerGuid: this.$route.query.CustomerGuid,
+          CustomerGuid: this.$route.query.token,
           AccessToken: this.$route.query.AccessToken
         }
 
         this.$store.commit('UPDATE_AUTH_TOKEN', token)
+      } else {
+        if ((!this.getOpenId() && !this.openid) || this.openid === 'undefined') {
+          window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa3861f732ba9f532&redirect_uri=http://wechat-1.34580.com/auth&response_type=code&scope=snsapi_base&state=${window.location.origin}|#wechat_redirect`
+        }
       }
 
       // cityid更新
-
       if (this.$route.query.cityid) {
         this.$store.commit('UPDATE_CITY', {
           value: this.$route.query.cityid
         })
+      }
+
+      // sourcetype更新
+      if (this.$route.query.SourceType) {
+        this.$store.commit('UPDATE_SOURCETYPE', this.$route.query.SourceType)
       }
 
       this.productList()
