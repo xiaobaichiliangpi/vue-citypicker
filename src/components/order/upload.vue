@@ -30,7 +30,7 @@
         <div>
           委托书<span style="color: red;">*</span><span style="color: #989898; font-size: 0.875rem;">请下载模板填写并加盖公章</span>
         </div>
-        <div class="download-btn" @click="$router.push({name: 'sendCommission'})">下载模板</div>
+        <div class="download-btn" @click="downLoad">下载模板</div>
       </h2>
       <mn-card class="upload-card">
         <mn-card-item>
@@ -118,6 +118,14 @@
           }
         })
       },
+      downLoad () {
+        this.$store.commit('UPDATE_QUALIFICATION', {
+          ...this.qualification,
+          BusinessLicenseImage: this.BusinessLicenseImage,
+          PowerOfAttorneyImage: this.PowerOfAttorneyImage
+        })
+        this.$router.push({name: 'sendCommission'})
+      },
       /**
        * 申请资质
        * @return {[type]} [description]
@@ -132,6 +140,10 @@
         })
         return response
       }
+    },
+    mounted () {
+      this.BusinessLicenseImage = this.qualification.BusinessLicenseImage
+      this.PowerOfAttorneyImage = this.qualification.PowerOfAttorneyImage
     },
     beforeDestroy () {
       if (this.loadingmask) this.loadingmask.destroy()
