@@ -160,7 +160,6 @@
         this.submitOrder()
         .then(response => {
           const order = response.data
-          this.$store.commit('UPDATE_ORDER', [])
 
           if (this.checkWx()) {
             this.wxPay(order)
@@ -209,7 +208,10 @@
           this.alertLayer = Alert.create({
             title: '拉取支付失败~',
             cancelText: '知道了'
-          }).show()
+          }).show().on('cancel', () => {
+            this.$store.commit('UPDATE_ORDER', [])
+            this.$router.push({name: 'errorPay'})
+          })
         } else {
           this.wxPayData = response.data.Data.WxPay.prepay
           this.wxPayBridge()
@@ -229,11 +231,15 @@
           this.alertLayer = Alert.create({
             title: '拉取支付失败~',
             cancelText: '知道了'
-          }).show()
+          }).show().on('cancel', () => {
+            this.$store.commit('UPDATE_ORDER', [])
+            this.$router.push({name: 'errorPay'})
+          })
         }
         this.aliPayHtml = response.data.Data.PreSignStr
 
         this.$nextTick(() => {
+          this.$store.commit('UPDATE_ORDER', [])
           this.submitToAli()
         })
       },
@@ -261,6 +267,7 @@
           'getBrandWCPayRequest', this.wxPayData,
           res => {
             if (res.err_msg == "get_brand_wcpay_request:ok" ) {
+              this.$store.commit('UPDATE_ORDER', [])
               this.$router.push({name: 'orderResult', params: { orderId: this.orderId }})
             }
          }

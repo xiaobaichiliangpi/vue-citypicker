@@ -19,7 +19,7 @@
               method="post"
               enctype='multipart/form-data'
               @change="uploadImages($event, 'BusinessLicenseImage')">
-              <input type="file" accept="image/*">
+              <input type="file" accept="image/*" name="files">
             </form>
           </div>
         </mn-card-body>
@@ -52,7 +52,17 @@
           </mn-card-body>
         </mn-card-item>
       </mn-card>
-
+      <div>
+        <vue-core-image-upload
+          :class="['btn', 'btn-primary']"
+          :crop="false"
+          @imageuploaded="imageuploaded"
+          :max-file-size="5242880"
+          compress="50"
+          :headers="headers"
+          url="/pickupcard/dashboard/providermanage/upload" >
+        </vue-core-image-upload>
+      </div>
       <div class="submit-btn">
         <mn-btn theme="primary" block :disabled="!PowerOfAttorneyImage || !BusinessLicenseImage" @click="submit">提交申请</mn-btn>
       </div>
@@ -65,8 +75,12 @@
   import { uploadImage, applyQualification } from '../../axios/user'
   import LoadingMask from 'vue-human/utils/LoadingMask'
   import Alert from 'vue-human/utils/Alert'
+  import VueCoreImageUpload from 'vue-core-image-upload'
 
   export default {
+    components: {
+      VueCoreImageUpload
+    },
     computed: {
       ...mapGetters({
         qualification: 'qualification'
@@ -78,17 +92,33 @@
           plus: require('vue-human-icons/js/ios/plus-empty')
         },
         BusinessLicenseImage: undefined,
-        PowerOfAttorneyImage: undefined
+        PowerOfAttorneyImage: undefined,
+        headers: {
+          Accept: 'application/json'
+        }
       }
     },
     methods: {
+      imageuploaded (e) {
+        console.log(e)
+      },
       uploadImages (event, type) {
-        let file = event.target.files[0]
+        let target = event.target || event.srcElement
+        let file = target.files[0]
         let reader = new FileReader()
         let _self = this
-        this.uploadLoading = true
+
         reader.readAsDataURL(file)
         reader.onload = function (e) {
+          console.log(this.result)
+          var result = this.result
+          var img = new Image()
+
+          img.src = result
+
+          if (result.length > 960 * 960) {
+            console.log(_self.compress(img))
+          }
           const ByteBinary = e.target.result.slice(e.target.result.indexOf(',') + 1, e.target.result.length)
           const data = {
             ByteBinary: ByteBinary,
@@ -102,6 +132,19 @@
             _self[type] = response.data.Data
           })
         }
+      },
+      compress (img) {
+        var canvas = document.createElement('canvas')
+        // var ctx = canvas.getContext('2d')
+
+        canvas.width = img.width
+        canvas.height = img.height
+
+        // 利用canvas进行绘图
+        // 将原来图片的质量压缩到原先的0.2倍。
+        var data = canvas.toDataURL('image/jpeg', 0.2)
+        debugger
+        return data
       },
       submit () {
         this.applyQualification()

@@ -1,5 +1,5 @@
-// 该文件被 './index.js' 加载，用于为当前 APP 添加全局样式
-//
+/* 该文件被 './index.js' 加载，用于为当前 APP 添加全局样式*/
+/**/
 @import "./vars";
 
 html,
@@ -14,16 +14,23 @@ p {
   margin: 0;
 }
 .has-slide-enter {
-  transform: translateX(50%);
+  -webkit-transform: translateX(50%);
+          transform: translateX(50%);
 }
 
 .has-slide-enter-active {
+  -webkit-transition: -webkit-transform 0.2s;
+  transition: -webkit-transform 0.2s;
   transition: transform 0.2s;
+  transition: transform 0.2s, -webkit-transform 0.2s;
 }
 
 .sign-modal.has-slide-in-bottom-enter-active,
 .sign-modal.has-slide-in-bottom-leave-active {
+  -webkit-transition: -webkit-transform 0;
+  transition: -webkit-transform 0;
   transition: transform 0;
+  transition: transform 0, -webkit-transform 0;
 }
 
 .submit-btn {
@@ -50,7 +57,8 @@ p {
   top: 50%;
   left: 2.5rem;
   right: 2.5rem;
-  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
 }
 
 .loading-text {

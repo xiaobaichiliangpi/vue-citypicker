@@ -64,7 +64,7 @@
     },
     data () {
       return {
-        orderDetail: undefined,
+        orderDetail: {},
         pickupcardOrderId: this.$route.params.orderId
       }
     },

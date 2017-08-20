@@ -12,6 +12,7 @@
         <div style="word-wrap: break-word;">{{JSON.stringify($route.query)}}</div>
         <div style="word-wrap: break-word;">本地token:{{JSON.stringify(token)}}</div>
         <div style="word-wrap: break-word;">openid:{{openid}}</div>
+        <div style="word-wrap: break-word;">city:{{city}}</div>
         <div class="products">
           <div
             class="products-item"
@@ -56,7 +57,9 @@
   import counter from 'vue-human/suites/counter'
   import SignModal from '../sign/modalSign.vue'
   import { productList } from '../../axios/product'
+  import { cityList } from '../../axios/user'
   import { mapGetters } from 'vuex'
+  import Alert from 'vue-human/utils/Alert'
 
   export default {
     components: {
@@ -83,7 +86,8 @@
       ...mapGetters({
         token: 'token',
         selectedProducts: 'order',
-        openid: 'openid'
+        openid: 'openid',
+        city: 'city'
       }),
       totalAmount () {
         let total = 0
@@ -101,6 +105,14 @@
       }
     },
     methods: {
+      /**
+       * 城市列表
+       * @return {[type]} [description]
+       */
+      async cityList () {
+        const response = await cityList()
+        return response
+      },
       /**
        * 提交订单
        * @return {[type]} [description]
@@ -122,7 +134,7 @@
       checkSign () {
         if (this.token.AccessToken && this.token.CustomerGuid) return true
 
-        if (!this.checkWx()) {
+        if (this.checkWx()) {
           this.toggleModal = !this.toggleModal
         } else {
           window.location.href = 'http://m.34580.com/login/index'
@@ -202,6 +214,10 @@
         this.$store.commit('UPDATE_CITY', {})
         this.$store.commit('CLEAR_AUTH_TOKEN')
         this.clearLocal()
+        this.alertLayer = Alert.create({
+          title: '退出登录成功',
+          cancelText: '知道了'
+        }).show().on()
       },
       /**
        * 清空本地存储
@@ -215,23 +231,41 @@
       }
     },
     mounted () {
-      if (/Android/gi.test(navigator.userAgent)) {
-        window.addEventListener('resize', function () {
-          if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
-            window.setTimeout(function () {
-              document.activeElement.scrollIntoViewIfNeeded()
-            }, 0)
-          }
-        })
-      }
-
       // 检查微信, 非微信的状态下(app) 将token信息更新
       if (!this.checkWx()) {
-        const token = {
-          CustomerGuid: this.$route.query.token,
-          AccessToken: this.$route.query.AccessToken
+        if (this.$route.query.from) {
+          this.cityList()
+          .then(response => {
+            if (response.data.Error === 0) {
+              const [city] = response.data.Data.filter(item => {
+                let cityid = this.$route.query.cityid
+                if (Array.isArray(cityid)) {
+                  cityid = cityid[0]
+                }
+
+                return (cityid + '') === (item.CityId + '')
+              })
+              this.$store.commit('UPDATE_CITY', city)
+            }
+          })
+
+          let queryGuid = this.$route.query.token
+          let queryToken = this.$route.query.AccessToken
+
+          if (Array.isArray(queryGuid)) {
+            queryGuid = queryGuid[0]
+          }
+
+          if (Array.isArray(queryToken)) {
+            queryToken = queryToken[0]
+          }
+
+          const token = {
+            CustomerGuid: queryGuid,
+            AccessToken: queryToken
+          }
+          this.$store.commit('UPDATE_AUTH_TOKEN', token)
         }
-        this.$store.commit('UPDATE_AUTH_TOKEN', token)
       } else {
         if ((!this.getOpenId() && !this.openid) || this.openid === 'undefined') {
           window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa3861f732ba9f532&redirect_uri=http://wechat-1.34580.com/auth&response_type=code&scope=snsapi_base&state=${window.location.origin}|#wechat_redirect`
@@ -239,14 +273,14 @@
       }
 
       // cityid更新
-      if (this.$route.query.cityid) {
+      if (this.$route.query.cityid && this.$route.query.from) {
         this.$store.commit('UPDATE_CITY', {
           value: this.$route.query.cityid
         })
       }
 
       // sourcetype更新
-      if (this.$route.query.SourceType) {
+      if (this.$route.query.SourceType && this.$route.query.from) {
         this.$store.commit('UPDATE_SOURCETYPE', this.$route.query.SourceType)
       }
 
@@ -258,15 +292,22 @@
         this.setSelectedProduct()
       },
       '$route.query' (val) {
-        const token = {
-          CustomerGuid: val.token,
-          AccessToken: val.AccessToken
+        if (this.$route.query.from) {
+          const token = {
+            CustomerGuid: val.token,
+            AccessToken: val.AccessToken
+          }
+          this.$store.commit('UPDATE_AUTH_TOKEN', token)
         }
-        this.$store.commit('UPDATE_AUTH_TOKEN', token)
       },
-      'token.CustomerGuid' (val) {
-        this.clearLocal()
+      'token.CustomerGuid' (val, oldVal) {
+        if (val !== oldVal) {
+          this.clearLocal()
+        }
       }
+    },
+    beforeDestroy () {
+      if (this.alertLayer) this.alertLayer.destroy()
     }
   }
 </script>

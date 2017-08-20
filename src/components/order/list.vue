@@ -39,10 +39,10 @@
             <mn-label>发票信息</mn-label>
           </mn-card-prefix>
           <mn-card-body>
-          {{item.receiptBean.receiptType === 0 ? '增值税普通发票' : '增值税专用发票'}}
+          {{item.receiptBean.receiptType === 1 ? '增值税普通发票' : '增值税专用发票'}}
           </mn-card-body>
         </mn-card-item>
-        <mn-card-item>
+        <mn-card-item v-else>
           <mn-card-prefix>
             <mn-label>发票信息</mn-label>
           </mn-card-prefix>

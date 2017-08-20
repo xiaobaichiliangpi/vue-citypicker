@@ -86,5 +86,13 @@ export default [
       title: '商品清单'
     },
     component: resolve => { require(['../components/order/orderProduct'], resolve) }
+  },
+  {
+    name: 'errorPay',
+    path: '/order/errorPay',
+    meta: {
+      title: '支付失败'
+    },
+    component: resolve => { require(['../components/order/errorPay'], resolve) }
   }
 ]

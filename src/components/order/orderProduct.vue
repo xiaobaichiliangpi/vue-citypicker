@@ -3,7 +3,7 @@
     <mn-container>
         <mn-card>
           <mn-card-item v-for="(item, key) in products" :key="key" v-if="products">
-            <mn-card-prefix>
+            <mn-card-prefix class="product-img">
               <div class="img" style="width: 80px; height: 80px;background: #ccc;">
                 <img :src="item.imagePath">
               </div>
@@ -69,5 +69,11 @@
   line-height: 1.5rem;
   height: 3rem;
   overflow: hidden;
+}
+
+.product-img img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 </style>
