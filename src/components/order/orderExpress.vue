@@ -6,7 +6,7 @@
             <mn-card-prefix>
               <mn-label>配送信息</mn-label>
             </mn-card-prefix>
-            <mn-card-body style="color: #f75121;" v-if="orderDetail.deliverStatus">
+            <mn-card-body style="color: #f75121;">
             {{orderDetail.deliverStatus === 0 ? '未发货' : '已发货'}}
             </mn-card-body>
           </mn-card-item>
