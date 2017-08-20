@@ -130,7 +130,7 @@
 
         if (this.activeType === 1) {
           return !this.models.TaxNumber || !this.models.CompanyName
-        } else {
+        } else if (this.activeType === 2) {
           return !this.activeInvoices
         }
       }
@@ -189,7 +189,7 @@
       if (this.activeType === 1 && this.invoices.content) {
         this.models = this.invoices.content
       } else {
-        this.activeInvoices = this.invoices.content
+        this.invoices.content.Id && (this.activeInvoices = this.invoices.content)
       }
     },
     beforeDestroy () {
