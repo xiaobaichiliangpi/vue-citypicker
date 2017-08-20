@@ -63,11 +63,11 @@
         this.timer = window.setInterval(() => {
           this.orderList()
           if (this.orderDetail && this.orderDetail.orderStatus === 2) {
-            if (this.alertLayer) this.alertLayer.destroy()
+            if (this.confirmLayer) this.confirmLayer.destroy()
             window.clearInterval(this.timer)
             this.timer = undefined
           }
-        }, 3000)
+        }, 1000)
       },
       backHome () {
         if (/micromessenger/.test(navigator.userAgent.toLowerCase())) {
@@ -87,9 +87,7 @@
           cancelText: '支付完成',
           confirmText: '支付已取消',
           title: '已完成支付??'
-        }).show().on('cancel', () => {
-          if (this.alertLayer) this.alertLayer.destroy()
-        }).on('confirm', () => {
+        }).show().on('confirm', () => {
           this.backHome()
         })
       }
@@ -99,7 +97,7 @@
     beforeDestroy () {
       window.clearInterval(this.timer)
       this.timer = undefined
-      if (this.alertLayer) this.alertLayer.destroy()
+      if (this.confirmLayer) this.confirmLayer.destroy()
       if (this.loadingmask) this.loadingmask.destroy()
     }
   }
