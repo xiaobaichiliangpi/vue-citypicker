@@ -12,7 +12,7 @@ export default {
   },
   set (token) {
     const now = new Date()
-    const expires = new Date(now.getTime() + 1000 * 60 * 60 * 24 * 365)
+    const expires = new Date(now.getTime() + 1000 * 60 * 60 * 24 * 10)
 
     window.localStorage.setItem(TOKEN_NAME, window.JSON.stringify({ ...token, expires }))
     return this.get()
