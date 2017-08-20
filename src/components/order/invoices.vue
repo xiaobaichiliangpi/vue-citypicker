@@ -53,7 +53,6 @@
           <h2 style="font-size: 1rem;padding-left: 1rem;margin-bottom: 0.5rem;">开票单位</h2>
           <mn-card>
             <mn-card-item
-              type="link"
               :class="[{'is-selected': activeInvoices && (activeInvoices.Id === item.Id)}]"
               v-if="qualifications"
               v-for="(item, key) in qualifications"
@@ -62,9 +61,12 @@
               <mn-card-prefix v-if="activeInvoices && (activeInvoices.Id === item.Id)">
                 <mn-icon :name="icons.check"></mn-icon>
               </mn-card-prefix>
-              <mn-card-body>
-                <p>{{item.CompanyName}}</p>
-                <p>纳税人编号: {{item.TaxNumber}}</p>
+              <mn-card-body class="qua-item">
+                <div>
+                  <p>{{item.CompanyName}}</p>
+                  <p>纳税人编号: {{item.TaxNumber}}</p>
+                </div>
+                <mn-icon :name="icons.arrow" style="color: #999;" @click.native="$router.push({name: 'orderQua', params: { id: item.Id }})"></mn-icon>
               </mn-card-body>
             </mn-card-item>
             <mn-card-item @click.native="addQua">
@@ -99,7 +101,8 @@
       return {
         icons: {
           plus: require('vue-human-icons/js/ios/plus-empty'),
-          check: require('vue-human-icons/js/ios/checkmark-empty')
+          check: require('vue-human-icons/js/ios/checkmark-empty'),
+          arrow: require('vue-human-icons/js/ios/arrow-right')
         },
         models: {
           TaxNumber: undefined,
@@ -134,8 +137,14 @@
     },
     methods: {
       addQua () {
-        this.$router.push({name: 'createInvoices'})
+        this.$store.commit('UPDATE_INVOICES', {
+          needInvoices: true,
+          invoicesType: 2,
+          invoicesLabel: '增值税专用发票',
+          content: {}
+        })
         this.$store.commit('UPDATE_QUALIFICATION', {})
+        this.$router.push({name: 'createInvoices'})
       },
       onSelectType (item) {
         this.activeType = item.value
@@ -190,7 +199,7 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .invoicesType-item {
   display: inline-block;
   padding: 0.2rem 0.5rem;
@@ -203,5 +212,15 @@
     color: #49ab34;
     border-color: #49ab34;
   }
+}
+
+.qua-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mn-input {
+  font-size: 0.875rem;
 }
 </style>

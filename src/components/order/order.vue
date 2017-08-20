@@ -28,7 +28,7 @@
               :key="key">
               <mn-card-prefix>
                 <div class="order-image">
-                  <img src="https://picpro-sz.34580.com/sz/ImageUrl/41911/480.png">
+                  <img :src="item.imagePath">
                 </div>
               </mn-card-prefix>
               <mn-card-body>
@@ -221,7 +221,7 @@
         const data = {
           Amount: order.totalPrice,
           OrderId: order.pickupcardOrderId,
-          ReturnUrl: `${window.location.origin}/#/order/result/${order.pickupcardOrderId}`,
+          ReturnUrl: `${window.location.origin}/#/order/errorPay`,
           ShowUrl: `${window.location.origin}/#/order/result/${order.pickupcardOrderId}`
         }
 
@@ -232,14 +232,16 @@
             title: '拉取支付失败~',
             cancelText: '知道了'
           }).show().on('cancel', () => {
-            this.$store.commit('UPDATE_ORDER', [])
+            setTimeout(() => {
+              this.$store.commit('UPDATE_ORDER', [])
+            }, 500)
+
             this.$router.push({name: 'errorPay'})
           })
         }
         this.aliPayHtml = response.data.Data.PreSignStr
 
         this.$nextTick(() => {
-          this.$store.commit('UPDATE_ORDER', [])
           this.submitToAli()
         })
       },
@@ -325,6 +327,7 @@
     img {
       display: block;
       width: 100%;
+      height: 100%;
     }
   }
 

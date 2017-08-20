@@ -8,11 +8,7 @@
             <img src="http://static.34580.cn/cn/min/touch/c/activity/wechat/ToB%20Card/banner1.jpg">
           </div>
         </div>
-        <div @click="loginOut">退出登录</div>
-        <div style="word-wrap: break-word;">{{JSON.stringify($route.query)}}</div>
-        <div style="word-wrap: break-word;">本地token:{{JSON.stringify(token)}}</div>
-        <div style="word-wrap: break-word;">openid:{{openid}}</div>
-        <div style="word-wrap: break-word;">city:{{city}}</div>
+        <div @click="loginOut" class="loginOutBtn" v-if="checkWx()">退出登录</div>
         <div class="products">
           <div
             class="products-item"
@@ -134,7 +130,7 @@
       checkSign () {
         if (this.token.AccessToken && this.token.CustomerGuid) return true
 
-        if (this.checkWx()) {
+        if (!this.checkWx()) {
           this.toggleModal = !this.toggleModal
         } else {
           window.location.href = 'http://m.34580.com/login/index'
@@ -153,6 +149,7 @@
         const response = await productList(this.models)
         if (response.data._embedded) {
           response.data._embedded && (this.products = [...(this.products || []), ...response.data._embedded.pickupcardProducts])
+          this.setSelectedProduct(response.data._embedded.pickupcardProducts)
           this.nextHref = response.data._links.next
           this.models.page += 1
         } else {
@@ -165,13 +162,13 @@
       /**
        * 设置已选择产品
        */
-      setSelectedProduct () {
+      setSelectedProduct (list) {
         this.selectedProducts && this.selectedProducts.forEach(item => {
-          let [product] = this.products.filter(val => {
+          let [product] = list.filter(val => {
             return val.pickupcardProductId === item.pickupcardProductId
           })
 
-          product.saledNum = item.saledNum
+          product && (product.saledNum = item.saledNum)
         })
       },
       addToCart (item) {
@@ -288,9 +285,6 @@
       // ..
     },
     watch: {
-      products () {
-        this.setSelectedProduct()
-      },
       '$route.query' (val) {
         if (this.$route.query.from) {
           const token = {
@@ -433,5 +427,20 @@
       display: block;
       width: 100%;
     }
+  }
+
+  .loginOutBtn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(0,0,0,.8);
+    font-size: 0.875rem;
+    color: #fff;
+    width: 4.5rem;
+    height: 1.8rem;
+    line-height: 1.8rem;
+    text-align: center;
+    border-radius: 0.9rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   }
 </style>

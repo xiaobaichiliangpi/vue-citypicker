@@ -14,7 +14,7 @@
       </div>
 
       <div class="submit-btn">
-        <mn-btn theme="primary" ref="submit" block @click="$router.go(-2)">返回提货卡首页</mn-btn>
+        <mn-btn theme="primary" ref="submit" block @click="backHome">返回提货卡首页</mn-btn>
       </div>
     </mn-container>
   </mn-scroller>
@@ -36,6 +36,14 @@
     computed: {
     },
     methods: {
+      backHome () {
+        if (/micromessenger/.test(navigator.userAgent.toLowerCase())) {
+          this.$router.go(-2)
+        } else {
+          let length = window.history.length
+          this.$router.go(2 - length)
+        }
+      }
     },
     created () {
     },

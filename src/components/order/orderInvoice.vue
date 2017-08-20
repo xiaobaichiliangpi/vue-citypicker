@@ -66,6 +66,7 @@
 
 <script>
   import { orderList } from '../../axios/product'
+  import LoadingMask from 'vue-human/utils/LoadingMask'
 
   export default {
     components: {
@@ -81,9 +82,13 @@
     methods: {
       async orderList () {
         try {
+          this.loadingmask = LoadingMask.create({
+          }).show()
           const response = await orderList({pickupcardOrderId: this.pickupcardOrderId})
+          if (this.loadingmask) this.loadingmask.destroy()
           this.invoice = response.data._embedded.pickupcardOrders[0].receiptBean
         } catch (error) {
+          if (this.loadingmask) this.loadingmask.destroy()
           throw error
         }
       }
@@ -92,6 +97,7 @@
       this.orderList()
     },
     beforeDestroy () {
+      if (this.loadingmask) this.loadingmask.destroy()
     }
   }
 </script>

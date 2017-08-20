@@ -52,7 +52,7 @@
               </mn-card-prefix>
               <mn-card-body>
                 <mn-input v-model="models.CompanyAddress"
-                 placeholder="请填写公司详细地址，需与注册一致"></mn-input>
+                 placeholder="请填写注册公司详细地址"></mn-input>
               </mn-card-body>
             </mn-card-item>
             <mn-card-item>
@@ -91,7 +91,7 @@
               </mn-card-prefix>
               <mn-card-body>
                 <mn-input v-model="models.TaxNumber"
-                 placeholder="纳税人识别号或者社会信用代码"></mn-input>
+                 placeholder="纳税人识别号"></mn-input>
               </mn-card-body>
             </mn-card-item>
             <mn-card-item>

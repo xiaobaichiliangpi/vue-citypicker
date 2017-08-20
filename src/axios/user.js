@@ -53,6 +53,19 @@ export function qualificationList () {
   })
 }
 
+export function showQualification (id) {
+  return axios({
+    method: 'GET',
+    url: `/Invoices/QualificationRecordRequest`,
+    params: {
+      CustomerGuid: store.getters.token.CustomerGuid,
+      SourceType: store.getters.SourceType,
+      accesstoken: store.getters.token.AccessToken,
+      Id: id
+    }
+  })
+}
+
 export function wxPay (data = {}) {
   return axios({
     method: 'POST',

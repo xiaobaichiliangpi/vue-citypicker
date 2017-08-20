@@ -7,7 +7,7 @@
             <mn-label>订单状态</mn-label>
           </mn-card-prefix>
           <mn-card-body class="pay-result">
-            {{item.orderStatus === 2 ? '支付成功' : '未支付'}}
+            {{item.orderStatus === 1 ? '未完成': item.orderStatus === 2 ? '支付完成' : item.orderStatus === 3 ? '配送中' : item.orderStatus === 4 ? '已完成' : '未知状态'}}
           </mn-card-body>
         </mn-card-item>
         <mn-card-item>
@@ -15,7 +15,7 @@
             <mn-label>订单编号</mn-label>
           </mn-card-prefix>
           <mn-card-body>
-          {{item.pickupcardOrderId}}
+          {{item.orderNumStr}}
           </mn-card-body>
         </mn-card-item>
         <mn-card-item>

@@ -12,15 +12,20 @@
             <img :src="BusinessLicenseImage">
           </div>
           <div class="upload-icon" v-else>
-            <mn-icon :name="icons.plus" :scale="2"></mn-icon>
-          </div>
-          <div class="upload-box">
-            <form role="form"
-              method="post"
-              enctype='multipart/form-data'
-              @change="uploadImages($event, 'BusinessLicenseImage')">
-              <input type="file" accept="image/*" name="files">
-            </form>
+              <mn-icon :name="icons.plus" :scale="2"></mn-icon>
+            </div>
+          <div class="upload-btn">
+            <vue-core-image-upload
+              :class="['btn', 'btn-primary']"
+              :crop="false"
+              @imageuploaded="licenseImageuploaded"
+              @imagechanged="licenseImageuploading"
+              :max-file-size="5242880"
+              compress="60"
+              inputOfFile="file"
+              :headers="headers"
+              url="/pickupcard/api/providermanage/upload" >
+            </vue-core-image-upload>
           </div>
         </mn-card-body>
       </mn-card-item>
@@ -41,28 +46,22 @@
             <div class="upload-icon" v-else>
               <mn-icon :name="icons.plus" :scale="2"></mn-icon>
             </div>
-            <div class="upload-box">
-              <form role="form"
-                method="post"
-                enctype='multipart/form-data'
-                @change="uploadImages($event, 'PowerOfAttorneyImage')">
-                <input type="file" accept="image/*">
-              </form>
+            <div class="upload-btn">
+              <vue-core-image-upload
+                :class="['btn', 'btn-primary']"
+                :crop="false"
+                @imageuploaded="attorneyImageuploaded"
+                @imagechanged="attorneyImageuploading"
+                :max-file-size="5242880"
+                compress="60"
+                inputOfFile="file"
+                :headers="headers"
+                url="/pickupcard/api/providermanage/upload" >
+              </vue-core-image-upload>
             </div>
           </mn-card-body>
         </mn-card-item>
       </mn-card>
-      <div>
-        <vue-core-image-upload
-          :class="['btn', 'btn-primary']"
-          :crop="false"
-          @imageuploaded="imageuploaded"
-          :max-file-size="5242880"
-          compress="50"
-          :headers="headers"
-          url="/pickupcard/dashboard/providermanage/upload" >
-        </vue-core-image-upload>
-      </div>
       <div class="submit-btn">
         <mn-btn theme="primary" block :disabled="!PowerOfAttorneyImage || !BusinessLicenseImage" @click="submit">提交申请</mn-btn>
       </div>
@@ -99,8 +98,21 @@
       }
     },
     methods: {
-      imageuploaded (e) {
-        console.log(e)
+      licenseImageuploaded (res) {
+        if (this.loadingmask) this.loadingmask.destroy()
+        this.BusinessLicenseImage = res
+      },
+      licenseImageuploading () {
+        this.loadingmask = LoadingMask.create({
+        }).show()
+      },
+      attorneyImageuploaded (res) {
+        if (this.loadingmask) this.loadingmask.destroy()
+        this.PowerOfAttorneyImage = res
+      },
+      attorneyImageuploading () {
+        this.loadingmask = LoadingMask.create({
+        }).show()
       },
       uploadImages (event, type) {
         let target = event.target || event.srcElement
@@ -213,17 +225,6 @@
     }
   }
 
-  .upload-box input {
-    width: 5rem;
-    height: 5rem;
-    outline: none;
-    opacity: 0;
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 99;
-  }
-
   .upload-icon {
     position: absolute;
     left: 0;
@@ -251,5 +252,21 @@
     border: 1px solid #999;
     border-radius: 3px;
     padding: 0.2rem 0.6rem;
+  }
+
+  .upload-btn {
+    width: 5rem;
+    height: 5rem;
+    outline: none;
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 99;
+
+    & > div {
+      width: 100%;
+      height: 100%;
+    }
   }
 </style>

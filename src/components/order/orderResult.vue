@@ -23,7 +23,7 @@
       </div>
 
       <div class="submit-btn">
-        <mn-btn theme="primary" ref="submit" block @click="$router.go(-2)">返回提货卡首页</mn-btn>
+        <mn-btn theme="primary" ref="submit" block @click="backHome">返回提货卡首页</mn-btn>
       </div>
     </mn-container>
   </mn-scroller>
@@ -31,6 +31,7 @@
 
 <script>
   import { orderList } from '../../axios/product'
+  import Confirm from 'vue-human/utils/Confirm'
 
   export default {
     components: {
@@ -62,13 +63,36 @@
         this.timer = window.setInterval(() => {
           this.orderList()
           if (this.orderDetail && this.orderDetail.orderStatus === 2) {
+            if (this.alertLayer) this.alertLayer.destroy()
             window.clearInterval(this.timer)
             this.timer = undefined
           }
         }, 3000)
+      },
+      backHome () {
+        if (/micromessenger/.test(navigator.userAgent.toLowerCase())) {
+          this.$router.go(-2)
+        } else {
+          let length = window.history.length
+          this.$router.go(2 - length)
+        }
+      },
+      checkWx () {
+        return /micromessenger/.test(navigator.userAgent.toLowerCase())
       }
     },
     created () {
+      if (!this.checkWx()) {
+        this.confirmLayer = Confirm.create({
+          cancelText: '支付完成',
+          confirmText: '支付已取消',
+          title: '已完成支付??'
+        }).show().on('cancel', () => {
+          if (this.alertLayer) this.alertLayer.destroy()
+        }).on('confirm', () => {
+          this.backHome()
+        })
+      }
       this.$store.commit('UPDATE_ORDER', [])
       this.pollOrder()
     },

@@ -6,7 +6,7 @@
             <mn-card-prefix>
               <mn-label>配送信息</mn-label>
             </mn-card-prefix>
-            <mn-card-body style="color: #f75121;">
+            <mn-card-body style="color: #f75121;" v-if="orderDetail.deliverStatus">
             {{orderDetail.deliverStatus === 0 ? '未发货' : '已发货'}}
             </mn-card-body>
           </mn-card-item>
@@ -58,6 +58,7 @@
 
 <script>
   import { orderList } from '../../axios/product'
+  import LoadingMask from 'vue-human/utils/LoadingMask'
 
   export default {
     components: {
@@ -73,10 +74,14 @@
     methods: {
       async orderList () {
         try {
+          this.loadingmask = LoadingMask.create({
+          }).show()
           const response = await orderList({pickupcardOrderId: this.pickupcardOrderId})
+          if (this.loadingmask) this.loadingmask.destroy()
           this.orderDetail = response.data._embedded.pickupcardOrders[0]
           console.log(this.orderDetail)
         } catch (error) {
+          if (this.loadingmask) this.loadingmask.destroy()
           throw error
         }
       }
@@ -85,6 +90,7 @@
       this.orderList()
     },
     beforeDestroy () {
+      if (this.loadingmask) this.loadingmask.destroy()
     }
   }
 </script>

@@ -94,5 +94,13 @@ export default [
       title: '支付失败'
     },
     component: resolve => { require(['../components/order/errorPay'], resolve) }
+  },
+  {
+    name: 'orderQua',
+    path: '/order/qua/:id',
+    meta: {
+      title: '资质查看'
+    },
+    component: resolve => { require(['../components/order/showQua'], resolve) }
   }
 ]
