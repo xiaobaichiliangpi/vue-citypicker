@@ -8,7 +8,7 @@
             <img src="http://static.34580.cn/cn/min/touch/c/activity/wechat/ToB%20Card/banner1.jpg">
           </div>
         </div>
-        <div @click="loginOut" class="loginOutBtn" v-if="checkWx()">退出登录</div>
+        <div @click="loginOut" class="loginOutBtn" v-if="checkWx() && token.AccessToken && token.CustomerGuid">退出登录</div>
         <div class="products">
           <div
             class="products-item"
@@ -130,7 +130,7 @@
       checkSign () {
         if (this.token.AccessToken && this.token.CustomerGuid) return true
 
-        if (!this.checkWx()) {
+        if (this.checkWx()) {
           this.toggleModal = !this.toggleModal
         } else {
           window.location.href = 'http://m.34580.com/login/index'
