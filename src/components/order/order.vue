@@ -221,7 +221,7 @@
         const data = {
           Amount: order.totalPrice,
           OrderId: order.pickupcardOrderId,
-          ReturnUrl: `${window.location.origin}/#/order/errorPay`,
+          ReturnUrl: `${window.location.origin}/#/order/result/${order.pickupcardOrderId}`,
           ShowUrl: `${window.location.origin}/#/order/result/${order.pickupcardOrderId}`
         }
 
