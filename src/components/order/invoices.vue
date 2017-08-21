@@ -141,10 +141,10 @@
           needInvoices: true,
           invoicesType: 2,
           invoicesLabel: '增值税专用发票',
-          content: {}
+          content: {...this.activeInvoices}
         })
         this.$store.commit('UPDATE_QUALIFICATION', {})
-        this.$router.push({name: 'createInvoices'})
+        this.$router.push({name: 'createInvoicesStep1'})
       },
       onSelectType (item) {
         this.activeType = item.value
@@ -183,13 +183,14 @@
       }
     },
     created () {
+      console.log(this.activeInvoices)
       this.qualificationList()
       this.needInvoices = this.invoices.needInvoices
       this.activeType = this.invoices.invoicesType || 1
-      if (this.activeType === 1 && this.invoices.content) {
-        this.models = this.invoices.content
+      if (this.activeType === 1) {
+        this.invoices.content && (this.models = this.invoices.content)
       } else {
-        this.invoices.content.Id && (this.activeInvoices = this.invoices.content)
+        this.invoices.content && this.invoices.content.Id && (this.activeInvoices = this.invoices.content)
       }
     },
     beforeDestroy () {
