@@ -164,7 +164,7 @@
           if (this.loadingmask) this.loadingmask.destroy()
           if (response.data.Error === 0) {
             this.$store.commit('UPDATE_QUALIFICATION', [])
-            this.$router.go(-2)
+            this.$router.go(-4)
           } else {
             this.alertLayer = Alert.create({
               title: response.data.Message,
@@ -248,7 +248,7 @@
 
   .download-btn {
     color: #666;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     border: 1px solid #999;
     border-radius: 3px;
     padding: 0.2rem 0.6rem;
