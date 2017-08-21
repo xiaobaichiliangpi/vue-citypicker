@@ -280,6 +280,12 @@
       if (this.order && this.order.length <= 0) {
         this.$router.push({name: 'homepage'})
       }
+
+      if (this.invoices.needInvoices && this.invoices.invoicesType === 2) {
+        if (this.invoices.content && !this.invoices.content.Id) {
+          this.$store.commit('UPDATE_INVOICES', {needInvoices: false})
+        }
+      }
     },
     beforeDestroy () {
       if (this.alertLayer) this.alertLayer.destroy()
