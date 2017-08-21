@@ -27,9 +27,33 @@ export default [
     name: 'createInvoices',
     path: '/order/invoices/create',
     meta: {
-      title: '单位信息'
+      title: '添加单位信息'
     },
     component: resolve => { require(['../components/order/createInvoices'], resolve) }
+  },
+  {
+    name: 'createInvoicesStep1',
+    path: '/order/invoices/create/step1',
+    meta: {
+      title: '添加单位信息'
+    },
+    component: resolve => { require(['../components/order/invoiceStep1'], resolve) }
+  },
+  {
+    name: 'createInvoicesStep2',
+    path: '/order/invoices/create/step2',
+    meta: {
+      title: '添加单位信息'
+    },
+    component: resolve => { require(['../components/order/invoiceStep2'], resolve) }
+  },
+  {
+    name: 'createInvoicesStep3',
+    path: '/order/invoices/create/step3',
+    meta: {
+      title: '添加单位信息'
+    },
+    component: resolve => { require(['../components/order/invoiceStep3'], resolve) }
   },
   {
     name: 'uploadInvoices',
