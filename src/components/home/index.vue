@@ -9,7 +9,7 @@
           </div>
         </div>
         <div @click="loginOut" class="loginOutBtn" v-if="checkWx() && token.AccessToken && token.CustomerGuid">退出登录</div>
-        <div class="products">
+        <div :class="['products', {'is-andriod': isAndriod && !checkWx()}]">
           <div
             class="products-item"
             v-if="products"
@@ -98,6 +98,9 @@
           total += item.saledNum
         })
         return total
+      },
+      isAndriod () {
+        return /Android/gi.test(navigator.userAgent)
       }
     },
     methods: {
@@ -309,6 +312,10 @@
 <style lang="scss">
   .products {
     padding-bottom: 4rem;
+
+    &.is-andriod {
+      padding-bottom: 14rem;
+    }
 
     &-item {
       background: #fff;
