@@ -123,7 +123,12 @@
           this.$store.commit('UPDATE_ORDER', this.products.filter(item => {
             return item.saledNum > 0
           }))
-
+          window.zhuge.track('确认购买', {
+            '触发位置': '提货卡购买页',
+            '订单金额': this.totalAmount,
+            '已选种类': this.products && this.products.filter(item => item.saledNum > 0).length,
+            '商品数量': this.totalNum
+          })
           this.$router.push({name: 'orderSubmit'})
         }
       },
@@ -176,6 +181,11 @@
       },
       addToCart (item) {
         item.saledNum = 1
+        window.zhuge.track('加入购物车', {
+          '触发位置': '提货卡购买页',
+          '商品名称': item.productName,
+          '商品编号': item.pickupcardProductId
+        })
       },
       /**
        * 滚动到底部

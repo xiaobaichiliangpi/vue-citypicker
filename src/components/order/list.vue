@@ -142,6 +142,9 @@
     },
     created () {
       this.orderList()
+      window.zhuge.track('查看提货卡订单', {
+        '触发位置': '提货卡订单页'
+      })
     }
   }
 </script>

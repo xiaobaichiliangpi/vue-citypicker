@@ -46,6 +46,10 @@
       }
     },
     created () {
+      window.zhuge.track('提货卡下单结果', {
+        '结果': 0,
+        '备注': '拉取支付失败'
+      })
     },
     beforeDestroy () {
     }

@@ -66,6 +66,9 @@
             if (this.confirmLayer) this.confirmLayer.destroy()
             window.clearInterval(this.timer)
             this.timer = undefined
+            window.zhuge.track('提货卡下单结果', {
+              '结果': 1
+            })
           }
         }, 1000)
       },
@@ -88,6 +91,10 @@
           confirmText: '支付已取消',
           title: '已完成支付??'
         }).show().on('confirm', () => {
+          window.zhuge.track('提货卡下单结果', {
+            '结果': 0,
+            '备注': '用户取消支付'
+          })
           this.backHome()
         })
       }

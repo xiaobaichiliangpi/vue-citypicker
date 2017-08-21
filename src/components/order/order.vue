@@ -153,7 +153,16 @@
 
           return
         }
-
+        window.zhuge.track('提货卡提交订单', {
+          '收货人': this.address.consignee,
+          '联系电话': this.address.consigneePhonenum,
+          '收货地址': this.address.consigneeAddress,
+          '支付方式': this.checkWx() ? '微信支付' : '支付宝',
+          '订单金额': this.totalAmount,
+          '已选种类': this.order && this.order.length,
+          '商品数量': this.totalNum,
+          '发票': this.invoices.needInvoices ? '需要' : '不需要'
+        })
         this.loadingmask = LoadingMask.create({
         }).show()
 
