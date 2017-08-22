@@ -5,7 +5,7 @@
       <mn-container>
         <div class="home-header">
           <div @click="pushOrder">
-            <img src="http://static.34580.cn/cn/min/touch/c/activity/wechat/ToB%20Card/banner1.jpg">
+            <img src="../../assets/banner.jpg">
           </div>
         </div>
         <div @click="loginOut" class="loginOutBtn" v-if="checkWx() && token.AccessToken && token.CustomerGuid">退出登录</div>

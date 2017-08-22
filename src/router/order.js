@@ -75,7 +75,7 @@ export default [
     name: 'orderList',
     path: '/order/list',
     meta: {
-      title: '我的提货卡订单'
+      title: '我的兑换券订单'
     },
     component: resolve => { require(['../components/order/list'], resolve) }
   },
@@ -83,7 +83,7 @@ export default [
     name: 'orderResult',
     path: '/order/result/:orderId',
     meta: {
-      title: '提货卡订单下单结果'
+      title: '兑换券订单下单结果'
     },
     component: resolve => { require(['../components/order/orderResult'], resolve) }
   },

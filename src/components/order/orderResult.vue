@@ -8,7 +8,7 @@
             订单支付成功
           </div>
           <div class="tip">
-            订单详情及配送信息可从我的礼赠卡订单中查询
+            订单详情及配送信息可从我的兑换券订单中查询
           </div>
         </div>
         <div v-else>
@@ -17,13 +17,13 @@
             <mn-loading-icon></mn-loading-icon>等待支付结果
           </div>
           <div class="tip">
-            如果长时间未收到支付结果,请根据订单号联系客服~
+            如果长时间未收到支付结果,请联系客服~
           </div>
         </div>
       </div>
 
       <div class="submit-btn">
-        <mn-btn theme="primary" ref="submit" block @click="backHome">返回提货卡首页</mn-btn>
+        <mn-btn theme="primary" ref="submit" block @click="backHome">返回兑换券首页</mn-btn>
       </div>
     </mn-container>
   </mn-scroller>
@@ -67,7 +67,8 @@
             window.clearInterval(this.timer)
             this.timer = undefined
             window.zhuge.track('提货卡下单结果', {
-              '结果': 1
+              '结果': 1,
+              '备注': '支付成功'
             })
           }
         }, 1000)
