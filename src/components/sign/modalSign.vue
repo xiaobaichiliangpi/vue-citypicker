@@ -102,7 +102,7 @@
         },
         options: {
           cities: [{
-            label: '选择提货城市',
+            label: '选择登录城市',
             value: undefined
           }]
         }

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import order from './order'
+import exchange from './exchange'
 
 Vue.use(VueRouter)
 
@@ -18,6 +19,11 @@ const router = new VueRouter({
       path: '/order',
       component: resolve => { require(['../components/order'], resolve) },
       children: order
+    },
+    {
+      path: '/exchange',
+      component: resolve => { require(['../components/exchange'], resolve) },
+      children: exchange
     }
   ]
 })
