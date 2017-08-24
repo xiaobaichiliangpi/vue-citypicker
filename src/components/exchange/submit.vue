@@ -18,9 +18,12 @@
       <mn-form :validate="$v" @success="success" ref="form" class="address">
         <mn-card>
           <mn-card-item>
+            <mn-card-prefix>
+              <mn-label>收货人</mn-label>
+            </mn-card-prefix>
             <mn-card-body>
               <mn-input v-model="models.cardNum"
-               placeholder="输入卡号"></mn-input>
+               placeholder="收货人姓名"></mn-input>
             </mn-card-body>
           </mn-card-item>
           <mn-card-item style="border-bottom: solid 1px rgba(0, 0, 0, 0.1);">
