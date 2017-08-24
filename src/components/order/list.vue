@@ -31,7 +31,7 @@
             <mn-label>配送信息</mn-label>
           </mn-card-prefix>
           <mn-card-body style="color: #f75121;">
-          {{item.deliverStatus === 0 ? '未发货' : '已发货'}}
+          {{item.deliverStatus === 0 ? '待配送（下单7个工作日内配送）' : '已发货'}}
           </mn-card-body>
         </mn-card-item>
         <mn-card-item type="link" @click="$router.push({name: 'orderInvoice', params: { orderId: item.pickupcardOrderId }})" v-if="item.receiptBean">

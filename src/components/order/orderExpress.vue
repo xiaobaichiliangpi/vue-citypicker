@@ -7,7 +7,7 @@
               <mn-label>配送信息</mn-label>
             </mn-card-prefix>
             <mn-card-body style="color: #f75121;">
-            {{orderDetail.deliverStatus === 0 ? '未发货' : '已发货'}}
+            {{orderDetail.deliverStatus === 0 ? '待配送（下单7个工作日内配送)' : '已发货'}}
             </mn-card-body>
           </mn-card-item>
           <mn-card-item v-if="orderDetail && orderDetail.expressCompany">
