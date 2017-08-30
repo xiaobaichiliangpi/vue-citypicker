@@ -14,14 +14,18 @@ const state = {
   address: local.getAddress(),
   qualification: local.getQualification(),
   invoices: local.getInvoices(),
-  order: local.getOrder()
+  order: local.getOrder(),
+  station: {},
+  receivetime: {}
 }
 
 const getters = {
   address: state => state.address,
   qualification: state => state.qualification,
   invoices: state => state.invoices,
-  order: state => state.order
+  order: state => state.order,
+  station: state => state.station,
+  receivetime: state => state.receivetime
 }
 
 export default {

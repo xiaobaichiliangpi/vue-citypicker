@@ -49,12 +49,12 @@
           </mn-card>
 
           <mn-card>
-            <mn-card-item type="link">
+            <mn-card-item type="link" @click="$router.push({name: 'exchangeAddress'})">
               <mn-card-prefix>
                 <mn-label>自提站点</mn-label>
               </mn-card-prefix>
               <mn-card-body>
-                <div>请选择</div>
+                <div>{{workstation.WorkStationName ? workstation.WorkStationName : '请选择'}}</div>
               </mn-card-body>
             </mn-card-item>
           </mn-card>
@@ -161,7 +161,8 @@
     },
     computed: {
       ...mapGetters({
-        token: 'exToken'
+        token: 'exToken',
+        workstation: 'station'
       })
     },
     data () {

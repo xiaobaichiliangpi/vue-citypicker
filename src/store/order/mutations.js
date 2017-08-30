@@ -3,7 +3,9 @@ import {
   UPDATE_ADDRESS,
   UPDATE_QUALIFICATION,
   UPDATE_INVOICES,
-  UPDATE_ORDER } from '../mutation-types'
+  UPDATE_ORDER,
+  UPDATE_ORDER_WORKSTATION,
+  UPDATE_ORDER_RECEIVETIME } from '../mutation-types'
 
 export default {
   [UPDATE_ADDRESS] (state, address) {
@@ -17,5 +19,11 @@ export default {
   },
   [UPDATE_ORDER] (state, order) {
     state.order = local.setOrder(order)
+  },
+  [UPDATE_ORDER_WORKSTATION] (state, station) {
+    state.station = station
+  },
+  [UPDATE_ORDER_RECEIVETIME] (state, receivetime) {
+    state.receivetime = receivetime
   }
 }

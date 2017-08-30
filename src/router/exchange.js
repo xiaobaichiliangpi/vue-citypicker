@@ -30,5 +30,13 @@ export default [
       title: '食行生鲜-兑换券提货'
     },
     component: resolve => { require(['../components/exchange/result'], resolve) }
+  },
+  {
+    name: 'exchangeAddress',
+    path: '/exchange/submit/address',
+    meta: {
+      title: '选择提货地址'
+    },
+    component: resolve => { require(['../components/exchange/address'], resolve) }
   }
 ]
