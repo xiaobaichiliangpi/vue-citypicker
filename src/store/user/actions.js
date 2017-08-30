@@ -18,8 +18,8 @@ export default {
   },
   [`${namespace}.exSignIn`] ({ commit }, params) {
     return exchangeSignIn(params).then(response => {
-      console.log(response)
-      commit(UPDATE_EX_AUTH_TOKEN, response.data.Data)
+      console.log(response.data.target)
+      commit(UPDATE_EX_AUTH_TOKEN, response.data.target)
       return response
     })
   }

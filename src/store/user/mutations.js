@@ -27,10 +27,10 @@ export default {
     state.SourceType = local.setSource(SourceType)
   },
   [UPDATE_EX_AUTH_TOKEN] (state, token) {
-    state.token = tokenStorage.set(token)
+    state.exToken = tokenStorage.setEx(token)
   },
   [CLEAR_EX_AUTH_TOKEN] (state, token) {
-    state.token = tokenStorage.remove(token)
+    state.exToken = tokenStorage.removeEx(token)
   },
   [UPDATE_EX_CITY] (state, city) {
     state.exCity = local.setExCity(city)
