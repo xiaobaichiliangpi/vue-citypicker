@@ -1,5 +1,5 @@
-import { signIn } from '../../axios/sign'
-import { UPDATE_AUTH_TOKEN } from '../mutation-types'
+import { signIn, exchangeSignIn } from '../../axios/sign'
+import { UPDATE_AUTH_TOKEN, UPDATE_EX_AUTH_TOKEN } from '../mutation-types'
 import Message from 'vue-human/utils/Message'
 
 const namespace = 'user'
@@ -14,6 +14,13 @@ export default {
         this.messageLayer = Message.create({ type: 'error', message: response.data.Message }).show()
         throw response.data
       }
+    })
+  },
+  [`${namespace}.exSignIn`] ({ commit }, params) {
+    return exchangeSignIn(params).then(response => {
+      console.log(response)
+      commit(UPDATE_EX_AUTH_TOKEN, response.data.Data)
+      return response
     })
   }
 }

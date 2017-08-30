@@ -15,14 +15,18 @@ const state = {
   token: tokenStorage.get(),
   city: local.getCity(),
   openid: local.getOpenid(),
-  SourceType: local.getSource()
+  SourceType: local.getSource(),
+  exToken: tokenStorage.getEx(),
+  exCity: local.getExCity()
 }
 
 const getters = {
   city: state => state.city,
   token: state => state.token,
   openid: state => state.openid,
-  SourceType: state => state.SourceType
+  SourceType: state => state.SourceType,
+  exToken: state => state.exToken,
+  exCity: state => state.exCity
 }
 
 export default {
