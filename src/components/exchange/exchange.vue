@@ -20,7 +20,7 @@
           </mn-card-item>
         </mn-card>
 
-         <mn-section-note>
+        <mn-section-note>
           <mn-helper :validate="$v.models.cardNum">
             <mn-helper-item name="required">请输入卡号</mn-helper-item>
             <mn-helper-item name="minLength">卡号长度应为8位</mn-helper-item>

@@ -38,5 +38,21 @@ export default [
       title: '选择提货地址'
     },
     component: resolve => { require(['../components/exchange/address'], resolve) }
+  },
+  {
+    name: 'exchangeStation',
+    path: '/exchange/submit/station',
+    meta: {
+      title: '选择自提站点'
+    },
+    component: resolve => { require(['../components/exchange/stationManage'], resolve) }
+  },
+  {
+    name: 'exchangeReceiveTime',
+    path: '/exchange/submit/receiveTime/:workStationId',
+    meta: {
+      title: '选择收货时间'
+    },
+    component: resolve => { require(['../components/exchange/receiveTime'], resolve) }
   }
 ]

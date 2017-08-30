@@ -60,12 +60,12 @@
           </mn-card>
 
           <mn-card>
-            <mn-card-item type="link">
+            <mn-card-item type="link" @click="chooseTime">
               <mn-card-prefix>
                 <mn-label>配送时间</mn-label>
               </mn-card-prefix>
               <mn-card-body>
-                <div>请选择</div>
+                <div>{{receivetime.Date ? `${receivetime.Date} ${receivetime.PeriodList.Period}` : '请选择'}}</div>
               </mn-card-body>
             </mn-card-item>
           </mn-card>
@@ -162,7 +162,8 @@
     computed: {
       ...mapGetters({
         token: 'exToken',
-        workstation: 'station'
+        workstation: 'station',
+        receivetime: 'receivetime'
       })
     },
     data () {
@@ -190,11 +191,22 @@
       },
       toggleSign () {
         this.toggleModal = !this.toggleModal
+      },
+      chooseTime () {
+        if (this.workstation.WorkStationId) {
+          this.$router.push({name: 'exchangeReceiveTime', params: {workStationId: this.workstation.WorkStationId}})
+        }
       }
     },
     created () {
     },
     beforeDestroy () {
+    },
+    watch: {
+      'token.customerGuid' (val) {
+        this.$store.commit('UPDATE_ORDER_RECEIVETIME', {})
+        this.$store.commit('UPDATE_ORDER_WORKSTATION', {})
+      }
     }
   }
 </script>

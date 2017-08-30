@@ -27,7 +27,11 @@ export function createOrUpdateAddress (data = {}) {
   return axios({
     method: 'POST',
     url: `/pickupcard/api/${(store.getters.city && store.getters.city.CityFlag) || 'sz'}/address/${store.getters.exToken.customerGuid}`,
-    data: data
+    data: {
+      ...data,
+      sourceType: store.getters.SourceType,
+      customerGuid: store.getters.exToken.customerGuid
+    }
   })
 }
 
@@ -58,7 +62,7 @@ export function listStation (params = {}) {
   })
 }
 
-export function listStationTime (params = {}) {
+export function listUserReceiverTime (params = {}) {
   return axios({
     method: 'GET',
     url: `/pickupcard/api/${(store.getters.city && store.getters.city.CityFlag) || 'sz'}/areas/${store.getters.exToken.customerGuid}`,

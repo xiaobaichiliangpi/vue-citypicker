@@ -60,7 +60,7 @@
         </div>
       </div>
       <div class="address-bottom">
-        <mn-btn theme="primary" size="sm" block @click="$router.push({name: 'stationManage'})">+新建自提站点</mn-btn>
+        <mn-btn theme="primary" size="sm" block @click="$router.push({name: 'exchangeStation'})">+新建自提站点</mn-btn>
       </div>
     </div>
   </div>
@@ -117,9 +117,9 @@
        */
       onSelect (item) {
         const params = {
-          WorkStationId: item.WorkStationId,
-          AddressId: item.AddressId,
-          Isdefault: !item.IsDefault
+          workStationId: item.WorkStationId,
+          addressId: item.AddressId,
+          isdefault: !item.IsDefault
         }
 
         this.confirmLayer = Confirm.create({ title: '提示', description: `确认设置默认地址?` }).show()
