@@ -7,15 +7,15 @@
           <mn-card-item>
             <mn-card-prefix class="product-img">
               <div class="img" style="width: 80px; height: 80px;background: #ccc;">
-                <img src="http://pic-prd.suiyi.com.cn/group1/M00/00/76/CgE-EFmfqTiAVUg9AABIQgXkjmU955.jpg">
+                <img :src="product.imagePath">
               </div>
             </mn-card-prefix>
             <mn-card-body>
               <div class="product-title">
-                test五香牛肉
+                {{product.productName}}
               </div>
               <div class="product-info">
-                <span style="color: #999; font-size: 0.875rem;">×1</span>
+                <span style="color: #999; font-size: 0.875rem;">×{{product.number}}</span>
               </div>
             </mn-card-body>
           </mn-card-item>
@@ -139,6 +139,7 @@
     maxLength } from 'vuelidate/lib/validators'
   import SignModal from '../sign/exchangeSign.vue'
   import { mapGetters } from 'vuex'
+  import { getProductByCard } from '../../axios/exchange'
 
   export default {
     components: {
@@ -180,7 +181,8 @@
           value: 2
         }],
         activeType: 1,
-        toggleModal: false
+        toggleModal: false,
+        product: {}
       }
     },
     methods: {
@@ -196,9 +198,20 @@
         if (this.workstation.WorkStationId) {
           this.$router.push({name: 'exchangeReceiveTime', params: {workStationId: this.workstation.WorkStationId}})
         }
+      },
+      getProductByCard () {
+        getProductByCard(this.$route.query.cardNum)
+        .then(response => {
+          console.log(response)
+          this.product = response.data.target[0]
+        })
+        .catch(error => {
+          console.log(error)
+        })
       }
     },
     created () {
+      this.getProductByCard()
     },
     beforeDestroy () {
     },
