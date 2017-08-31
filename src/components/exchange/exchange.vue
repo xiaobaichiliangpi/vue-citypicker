@@ -41,7 +41,7 @@
         </div>
         <div class="form-footer">
           <div @click="$router.push({name: 'homepage'})">购买提货卡</div>
-          <div>我的提货卡记录</div>
+          <div @click="$router.push({name: 'exchangeOrder'})">我的提货卡记录</div>
         </div>
       </mn-form>
     </mn-container>

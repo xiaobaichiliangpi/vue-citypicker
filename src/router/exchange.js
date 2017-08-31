@@ -54,5 +54,13 @@ export default [
       title: '选择收货时间'
     },
     component: resolve => { require(['../components/exchange/receiveTime'], resolve) }
+  },
+  {
+    name: 'exchangeOrder',
+    path: '/exchange/order',
+    meta: {
+      title: '我的提货记录'
+    },
+    component: resolve => { require(['../components/exchange/list'], resolve) }
   }
 ]

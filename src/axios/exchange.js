@@ -92,3 +92,27 @@ export function pickupProduct (data = {}) {
     data: data
   })
 }
+
+export function smsCode (params = {}) {
+  return axios({
+    method: 'GET',
+    url: `/pickupcard/api/getverifycode`,
+    params: params
+  })
+}
+
+export function listByPhone (params = {}) {
+  return axios({
+    method: 'GET',
+    url: `/pickupcard/api/orderlistbyphone`,
+    params: params
+  })
+}
+
+export function listByAccount (params = {}) {
+  return axios({
+    method: 'GET',
+    url: `/pickupcard/api/orderlistshihangaccount`,
+    params: params
+  })
+}
