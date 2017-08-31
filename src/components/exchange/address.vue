@@ -176,6 +176,7 @@
       this.listUserAddress()
     },
     beforeDestroy () {
+      this.$store.commit('UPDATE_PICK_TYPE', 1)
       if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
       if (this.confirmLayer) this.confirmLayer.destroy()
     }

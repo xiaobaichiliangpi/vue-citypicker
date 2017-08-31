@@ -80,6 +80,9 @@
     },
     created () {
       this.listUserReceiverTime()
+    },
+    beforeDestroy () {
+      this.$store.commit('UPDATE_PICK_TYPE', 1)
     }
   }
 </script>

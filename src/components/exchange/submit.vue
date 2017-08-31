@@ -27,7 +27,12 @@
             <mn-card>
               <mn-card-item>
                 <mn-card-body>
-                  <div v-for="(item, key) in pickType" :key="key" :class="['pickType-item', {'is-selected': item.value === activeType}]" @click="onSelectType(item)">
+                  <div
+                    v-for="(item, key) in pickType"
+                    :key="key"
+                    :class="['pickType-item', {'is-selected': item.value === activeType}]"
+                    @click="onSelectType(item)"
+                    v-if="(item.value === product.pickupMethod) || (product.pickupMethod === 3)">
                     {{item.label}}
                   </div>
                 </mn-card-body>
@@ -49,7 +54,7 @@
           </mn-card>
 
           <mn-card>
-            <mn-card-item type="link" @click="$router.push({name: 'exchangeAddress'})">
+            <mn-card-item type="link" @click="chooseStation">
               <mn-card-prefix>
                 <mn-label>自提站点</mn-label>
               </mn-card-prefix>
@@ -71,7 +76,7 @@
           </mn-card>
 
           <div class="submit-btn">
-            <mn-btn theme="primary" ref="submit" block>确认提货</mn-btn>
+            <mn-btn theme="primary" block @click="stationSubmit">确认提货</mn-btn>
           </div>
         </div>
 
@@ -82,7 +87,7 @@
                 <mn-label>收货人</mn-label>
               </mn-card-prefix>
               <mn-card-body>
-                <mn-input v-model="models.cardNum"
+                <mn-input v-model="models.consignee"
                  placeholder="收货人姓名"></mn-input>
               </mn-card-body>
             </mn-card-item>
@@ -91,7 +96,7 @@
                 <mn-label>联系电话</mn-label>
               </mn-card-prefix>
               <mn-card-body>
-                <mn-input v-model="models.passwd"
+                <mn-input v-model="models.consigneePhonenum"
                  placeholder="收货人电话"></mn-input>
               </mn-card-body>
             </mn-card-item>
@@ -100,25 +105,28 @@
                 <mn-label>收货地址</mn-label>
               </mn-card-prefix>
               <mn-card-body>
-                <mn-input v-model="models.passwd"
+                <mn-input v-model="models.consigneeAddress"
                  placeholder="请填写详细地址"></mn-input>
               </mn-card-body>
             </mn-card-item>
           </mn-card>
 
            <mn-section-note>
-            <mn-helper :validate="$v.models.cardNum">
-              <mn-helper-item name="required">请输入卡号</mn-helper-item>
-              <mn-helper-item name="minLength">卡号长度应为8位</mn-helper-item>
-              <mn-helper-item name="maxLength">卡号长度应为8位</mn-helper-item>
+            <mn-helper :validate="$v.models.consignee">
+              <mn-helper-item name="required">请输入收货人</mn-helper-item>
             </mn-helper>
           </mn-section-note>
 
           <mn-section-note>
-            <mn-helper :validate="$v.models.passwd">
-              <mn-helper-item name="required">请输入卡片密码</mn-helper-item>
-              <mn-helper-item name="minLength">密码长度应为6位</mn-helper-item>
-              <mn-helper-item name="maxLength">密码长度应为6位</mn-helper-item>
+            <mn-helper :validate="$v.models.consigneePhonenum">
+              <mn-helper-item name="required">请输入收货人电话</mn-helper-item>
+              <mn-helper-item name="phone">电话格式不对</mn-helper-item>
+            </mn-helper>
+          </mn-section-note>
+
+          <mn-section-note>
+            <mn-helper :validate="$v.models.consigneeAddress">
+              <mn-helper-item name="required">请填写详细地址</mn-helper-item>
             </mn-helper>
           </mn-section-note>
 
@@ -134,12 +142,12 @@
 <script>
   import input from 'vue-human/suites/input'
   import {
-    required,
-    minLength,
-    maxLength } from 'vuelidate/lib/validators'
+    required } from 'vuelidate/lib/validators'
   import SignModal from '../sign/exchangeSign.vue'
   import { mapGetters } from 'vuex'
-  import { getProductByCard } from '../../axios/exchange'
+  import { getProductByCard, pickupProduct } from '../../axios/exchange'
+  import Alert from 'vue-human/utils/Alert'
+  import LoadingMask from 'vue-human/utils/LoadingMask'
 
   export default {
     components: {
@@ -148,30 +156,39 @@
     },
     validations: {
       models: {
-        cardNum: {
-          required,
-          minLength: minLength(8),
-          maxLength: maxLength(8)
+        consignee: {
+          required
         },
-        passwd: {
+        consigneeAddress: {
+          required
+        },
+        consigneePhonenum: {
           required,
-          minLength: minLength(6),
-          maxLength: maxLength(6)
+          phone () {
+            if (this.models.consigneePhonenum) {
+              return /^1[3|4|5|7|8][0-9]{9}$/.test(this.models.consigneePhonenum)
+            } else {
+              return true
+            }
+          }
         }
       }
     },
     computed: {
       ...mapGetters({
         token: 'exToken',
+        city: 'exCity',
         workstation: 'station',
-        receivetime: 'receivetime'
+        receivetime: 'receivetime',
+        vuexActiveType: 'activeType'
       })
     },
     data () {
       return {
         models: {
-          cardNum: undefined,
-          passwd: undefined
+          consignee: undefined,
+          consigneeAddress: undefined,
+          consigneePhonenum: undefined
         },
         pickType: [{
           label: '站点自提',
@@ -180,13 +197,73 @@
           label: '快递配送',
           value: 2
         }],
-        activeType: 1,
+        activeType: undefined,
         toggleModal: false,
         product: {}
       }
     },
     methods: {
       success () {
+        const data = {
+          cardNum: this.$route.query.cardNum,
+          passwd: this.$route.query.passwd,
+          pickupMethod: this.activeType,
+          expressInput: {
+            ...this.models
+          }
+        }
+
+        this.pickupProduct(data)
+      },
+      stationSubmit () {
+        if (!this.token.customerGuid) {
+          this.toggleSign()
+        } else if (!this.workstation.WorkStationId) {
+          this.alertLayer = Alert.create({
+            title: '请选择自提站点',
+            cancelText: '好的'
+          }).show()
+        } else if (!this.workstation.WorkStationId) {
+          this.alertLayer = Alert.create({
+            title: '请先选择配送时间',
+            cancelText: '好的'
+          }).show()
+        } else {
+          const data = {
+            cardNum: this.$route.query.cardNum,
+            passwd: this.$route.query.passwd,
+            pickupMethod: this.activeType,
+            zitiInput: {
+              addressId: this.workstation.AddressId,
+              workstationId: this.workstation.WorkStationId,
+              stationName: this.workstation.WorkStationName,
+              shippingTime: this.receivetime.Date,
+              timeSlot: this.receivetime.PeriodList.Period,
+              customerGuid: this.token.customerGuid,
+              cityCode: this.city.CityFlag
+            }
+          }
+
+          this.pickupProduct(data)
+        }
+      },
+      pickupProduct (data) {
+        this.loadingMaskLayer = LoadingMask.create().show()
+        pickupProduct(data)
+        .then(response => {
+          console.log(response)
+          if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
+          this.$router.push({name: 'exchangeResult'})
+        })
+        .catch(error => {
+          console.log(error)
+          if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
+          this.alertLayer = Alert.create({
+            title: '出错了!',
+            description: error.response.data.message,
+            cancelText: '好的'
+          }).show()
+        })
       },
       onSelectType (item) {
         this.activeType = item.value
@@ -194,16 +271,28 @@
       toggleSign () {
         this.toggleModal = !this.toggleModal
       },
+      chooseStation () {
+        if (this.token.customerGuid) {
+          this.$router.push({name: 'exchangeAddress'})
+        } else {
+          this.toggleSign()
+        }
+      },
       chooseTime () {
         if (this.workstation.WorkStationId) {
           this.$router.push({name: 'exchangeReceiveTime', params: {workStationId: this.workstation.WorkStationId}})
+        } else {
+          this.alertLayer = Alert.create({
+            title: '请先选择自提站点',
+            cancelText: '好的'
+          }).show()
         }
       },
       getProductByCard () {
         getProductByCard(this.$route.query.cardNum)
         .then(response => {
-          console.log(response)
           this.product = response.data.target[0]
+          this.activeType = this.vuexActiveType
         })
         .catch(error => {
           console.log(error)
@@ -214,6 +303,9 @@
       this.getProductByCard()
     },
     beforeDestroy () {
+      this.$store.commit('UPDATE_PICK_TYPE', undefined)
+      if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
+      if (this.alertLayer) this.alertLayer.destroy()
     },
     watch: {
       'token.customerGuid' (val) {

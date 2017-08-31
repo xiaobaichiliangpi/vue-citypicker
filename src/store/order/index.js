@@ -16,7 +16,8 @@ const state = {
   invoices: local.getInvoices(),
   order: local.getOrder(),
   station: {},
-  receivetime: {}
+  receivetime: {},
+  activeType: undefined
 }
 
 const getters = {
@@ -25,7 +26,8 @@ const getters = {
   invoices: state => state.invoices,
   order: state => state.order,
   station: state => state.station,
-  receivetime: state => state.receivetime
+  receivetime: state => state.receivetime,
+  activeType: state => state.activeType
 }
 
 export default {

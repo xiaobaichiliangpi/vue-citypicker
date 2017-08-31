@@ -84,3 +84,11 @@ export function validateCard (data = {}) {
     data: data
   })
 }
+
+export function pickupProduct (data = {}) {
+  return axios({
+    method: 'POST',
+    url: `/pickupcard/api/pickup`,
+    data: data
+  })
+}

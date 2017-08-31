@@ -5,7 +5,8 @@ import {
   UPDATE_INVOICES,
   UPDATE_ORDER,
   UPDATE_ORDER_WORKSTATION,
-  UPDATE_ORDER_RECEIVETIME } from '../mutation-types'
+  UPDATE_ORDER_RECEIVETIME,
+  UPDATE_PICK_TYPE } from '../mutation-types'
 
 export default {
   [UPDATE_ADDRESS] (state, address) {
@@ -25,5 +26,8 @@ export default {
   },
   [UPDATE_ORDER_RECEIVETIME] (state, receivetime) {
     state.receivetime = receivetime
+  },
+  [UPDATE_PICK_TYPE] (state, type) {
+    state.activeType = type
   }
 }
