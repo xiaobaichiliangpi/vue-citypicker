@@ -69,3 +69,18 @@ export function listUserReceiverTime (params = {}) {
     params: params
   })
 }
+
+export function getProductByCard (cardNum) {
+  return axios({
+    method: 'GET',
+    url: `/pickupcard/api/getproductbycardnum/${cardNum}`
+  })
+}
+
+export function validateCard (data = {}) {
+  return axios({
+    method: 'POST',
+    url: `/pickupcard/api/validateproductbycardnumandpassword`,
+    data: data
+  })
+}

@@ -54,6 +54,9 @@
     required,
     minLength,
     maxLength } from 'vuelidate/lib/validators'
+  import { validateCard } from '../../axios/exchange'
+  import Alert from 'vue-human/utils/Alert'
+  import LoadingMask from 'vue-human/utils/LoadingMask'
 
   export default {
     components: {
@@ -83,11 +86,32 @@
     },
     methods: {
       success () {
+        const data = {
+          ...this.models
+        }
+
+        this.loadingMaskLayer = LoadingMask.create().show()
+        validateCard(data)
+        .then(response => {
+          if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
+          this.$router.push({name: 'exchangeSubmit', query: {cardNum: this.models.cardNum, passwd: this.models.passwd}})
+        })
+        .catch(error => {
+          console.log(error.response)
+          if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
+          this.alertLayer = Alert.create({
+            title: '出错了~',
+            description: error.response.data.message,
+            cancelText: '好的'
+          }).show()
+        })
       }
     },
     created () {
     },
     beforeDestroy () {
+      if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
+      if (this.alertLayer) this.alertLayer.destroy()
     }
   }
 </script>
