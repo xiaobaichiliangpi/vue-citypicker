@@ -116,3 +116,11 @@ export function listByAccount (params = {}) {
     params: params
   })
 }
+
+export function pickUpPsw (params = {}) {
+  return axios({
+    method: 'GET',
+    url: `/pickupcard/api/${(store.getters.city && store.getters.city.CityFlag) || 'sz'}/boxinfos`,
+    params: params
+  })
+}

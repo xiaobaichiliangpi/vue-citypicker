@@ -65,7 +65,7 @@
             <mn-card-item>
               <mn-card-prefix class="product-img">
                 <div class="img" style="width: 80px; height: 80px;background: #ccc;">
-
+                  <img :src="item.imagePath">
                 </div>
               </mn-card-prefix>
               <mn-card-body>
@@ -73,7 +73,7 @@
                   {{item.pickupcardProductName}}
                 </div>
                 <div class="product-info">
-                  <span style="color: #999; font-size: 0.875rem;">×{{item.number}}</span>
+                  <span style="color: #999; font-size: 0.875rem;">×1</span>
                 </div>
               </mn-card-body>
             </mn-card-item>
@@ -97,8 +97,26 @@
               <mn-card-prefix>
                 <mn-label>配送状态</mn-label>
               </mn-card-prefix>
-              <mn-card-body style="color: #ea623a;">
-              {{item.orderStatus}}
+              <mn-card-body style="color: #ea623a;" class='track-item'>
+                <div>{{item.orderStatus ? item.orderStatus : '待配送'}}</div>
+                <span v-if="item.orderStatus === '待取货' && !item.pickUpInfo" @click="pickUpPsw(item)">获取密码 <mn-loading-icon v-if="gettingPsw"></mn-loading-icon></span>
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item v-if="item.pickUpInfo">
+              <mn-card-prefix>
+                <mn-label>开柜密码</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+              <span style="color: #fff;background: #ea623a;padding: 0.2rem 0.5rem;border-radius: 4px;">{{item.pickUpInfo.Password}}</span>
+              开柜后10分钟失效
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item v-if="item.pickUpInfo">
+              <mn-card-prefix>
+                <mn-label>箱柜编号</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+              <span style="color: #ea623a;">{{item.pickUpInfo.PhoneBoxInfos[0].TypeName}} {{item.pickUpInfo.PhoneBoxInfos[0].CabinetNumber}}-{{item.pickUpInfo.PhoneBoxInfos[0].SerialNumber}}号箱</span>
               </mn-card-body>
             </mn-card-item>
             <mn-card-item>
@@ -121,44 +139,123 @@
         </div>
 
         <div v-if="expressOrders && activeType === 2">
-          <mn-card class="product">
+          <mn-card class="product" v-for="(item, key) in expressOrders" :key="key">
             <mn-card-item>
               <mn-card-prefix class="product-img">
                 <div class="img" style="width: 80px; height: 80px;background: #ccc;">
-                  <img :src="product.imagePath">
+                  <img :src="item.imagePath">
                 </div>
               </mn-card-prefix>
               <mn-card-body>
                 <div class="product-title">
-                  {{product.productName}}
+                  {{item.pickupcardProductName}}
                 </div>
                 <div class="product-info">
-                  <span style="color: #999; font-size: 0.875rem;">×{{product.number}}</span>
+                  <span style="color: #999; font-size: 0.875rem;">×1</span>
                 </div>
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item>
+              <mn-card-prefix>
+                <mn-label>提货时间</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+              {{item.pickupTime}}
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item style="color: #ea623a;">
+              <mn-card-prefix>
+                <mn-label>配送状态</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+              {{item.expressNum ? '已发货' : '待发货'}}
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item v-if="item.expressCompany">
+              <mn-card-prefix>
+                <mn-label>配送物流</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+              {{item.expressCompany}}
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item v-if="item.expressNum">
+              <mn-card-prefix>
+                <mn-label>物流单号</mn-label>
+              </mn-card-prefix>
+              <mn-card-body class='track-item'>
+              <span>
+                {{item.expressNum}}
+              </span>
+              <span @click="searchTrack(item)">查询</span>
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item>
+              <mn-card-prefix>
+                <mn-label>收货人</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+              {{item.consignee}}
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item>
+              <mn-card-prefix>
+                <mn-label>联系电话</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+              {{item.consigneePhonenum}}
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item>
+              <mn-card-prefix>
+                <mn-label>收货地址</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+              {{item.consigneeAddress}}
               </mn-card-body>
             </mn-card-item>
           </mn-card>
         </div>
-
       </mn-container>
     </mn-scroller>
+
+    <mn-modal :visible.sync="showModal" class="sign-modal" style="height: 60%;">
+      <mn-scroller :save="false">
+        <mn-card v-if="trackList">
+          <mn-card-item v-for="(item, key) in trackList" :key="key">
+            <mn-card-body>
+              <div style="font-size: 0.875rem;">{{item.AcceptStation}}</div>
+              <small style="color: #666;">{{item.AcceptTime}}</small>
+            </mn-card-body>
+          </mn-card-item>
+        </mn-card>
+        <div v-else class="empty-track">
+          暂无包裹数据,请稍后再查询
+        </div>
+      </mn-scroller>
+    </mn-modal>
   </div>
 </template>
 
 <script>
   import input from 'vue-human/suites/input'
+  import modal from 'vue-human/suites/modal'
   import SignModal from '../sign/exchangeSign.vue'
   import { mapGetters } from 'vuex'
-  import { smsCode, listByPhone, listByAccount } from '../../axios/exchange'
+  import { smsCode, listByPhone, listByAccount, pickUpPsw } from '../../axios/exchange'
+  import LoadingMask from 'vue-human/utils/LoadingMask'
+  import Alert from 'vue-human/utils/Alert'
 
   export default {
     components: {
       ...input.map(),
+      ...modal.map(),
       SignModal
     },
     computed: {
       ...mapGetters({
-        token: 'exToken'
+        token: 'exToken',
+        city: 'exCity'
       }),
       searchBtnShow () {
         if (this.activeType === 1) {
@@ -190,7 +287,10 @@
         },
         sendingCode: false,
         secondDown: 59,
-        timer: undefined
+        timer: undefined,
+        showModal: false,
+        trackList: undefined,
+        gettingPsw: false
       }
     },
     methods: {
@@ -222,6 +322,11 @@
         .catch(error => {
           this.sendingCode = false
           console.log(error)
+          this.alertLayer = Alert.create({
+            title: '出错了~',
+            description: error.response.data.message,
+            cancelText: '好的'
+          }).show()
         })
       },
       listByPhone () {
@@ -231,10 +336,16 @@
 
         listByPhone(params)
         .then(response => {
+          if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
           this.expressOrders = response.data.target
         })
         .catch(error => {
-          console.log(error)
+          if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
+          this.alertLayer = Alert.create({
+            title: '出错了~',
+            description: error.response.data.message,
+            cancelText: '好的'
+          }).show()
         })
       },
       listByAccount () {
@@ -244,23 +355,62 @@
 
         listByAccount(params)
         .then(response => {
+          if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
           this.stationOrders = response.data.target
         })
         .catch(error => {
-          console.log(error)
+          if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
+          this.alertLayer = Alert.create({
+            title: '出错了~',
+            description: error.response.data.message,
+            cancelText: '好的'
+          }).show()
         })
       },
       search () {
+        this.loadingMaskLayer = LoadingMask.create().show()
         if (this.activeType === 1) {
           this.listByAccount()
         } else {
           this.listByPhone()
         }
+      },
+      searchTrack (item) {
+        if (Array.isArray(item.trackList)) {
+          this.trackList = [...item.trackList].reverse()
+        } else {
+          this.trackList = undefined
+        }
+
+        this.showModal = true
+      },
+      pickUpPsw (item) {
+        if (this.gettingPsw) return
+        this.gettingPsw = true
+
+        const params = {
+          orderid: item.zitiOrderId,
+          customerguid: this.token.customerGuid,
+          citycode: this.city.CityFlag
+        }
+
+        pickUpPsw(params)
+        .then(response => {
+          console.log(response)
+          this.gettingPsw = false
+          item.pickUpInfo = response.data.target
+        })
+        .catch(error => {
+          console.log(error)
+          this.gettingPsw = false
+        })
       }
     },
     created () {
     },
     beforeDestroy () {
+      if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
+      if (this.alertLayer) this.alertLayer.destroy()
     },
     watch: {
     }
@@ -364,6 +514,25 @@
     &.is-disabled {
       color: #ccc;
     }
+  }
+}
+
+.empty-track {
+  width: 100%;
+  text-align: center;
+  color: #666;
+  position: absolute;
+  top: 50%;
+  margin-top: -1rem;
+}
+
+.track-item {
+  & > span:last-child {
+    border: 1px solid #666;
+    color: #666;
+    padding: 2px 1rem;
+    border-radius: 3px;
+    font-size: 0.875rem;
   }
 }
 </style>

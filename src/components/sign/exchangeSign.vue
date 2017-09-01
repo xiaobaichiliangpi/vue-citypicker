@@ -165,6 +165,7 @@
 
       this.listCity()
       .then(response => {
+        console.log(response)
         this.options.cities = [{
           label: '选择提货城市',
           value: undefined

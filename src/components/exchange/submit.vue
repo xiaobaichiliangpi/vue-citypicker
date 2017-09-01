@@ -237,8 +237,8 @@
               addressId: this.workstation.AddressId,
               workstationId: this.workstation.WorkStationId,
               stationName: this.workstation.WorkStationName,
-              shippingTime: this.receivetime.Date,
-              timeSlot: this.receivetime.PeriodList.Period,
+              shippingTime: this.receivetime.Datebackend,
+              timeSlot: this.receivetime.PeriodList.Periodbackend,
               customerGuid: this.token.customerGuid,
               cityCode: this.city.CityFlag
             }
@@ -280,7 +280,7 @@
       },
       chooseTime () {
         if (this.workstation.WorkStationId) {
-          this.$router.push({name: 'exchangeReceiveTime', params: {workStationId: this.workstation.WorkStationId}})
+          this.$router.push({name: 'exchangeReceiveTime', params: {workStationId: this.workstation.WorkStationId}, query: {cardNum: this.$route.query.cardNum}})
         } else {
           this.alertLayer = Alert.create({
             title: '请先选择自提站点',
