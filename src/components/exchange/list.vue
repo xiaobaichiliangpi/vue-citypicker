@@ -116,7 +116,11 @@
                 <mn-label>箱柜编号</mn-label>
               </mn-card-prefix>
               <mn-card-body>
-              <span style="color: #ea623a;">{{item.pickUpInfo.PhoneBoxInfos[0].TypeName}} {{item.pickUpInfo.PhoneBoxInfos[0].CabinetNumber}}-{{item.pickUpInfo.PhoneBoxInfos[0].SerialNumber}}号箱</span>
+                <div>
+                  <div v-for="(box, $index) in item.pickUpInfo.PhoneBoxInfos" :key="$index">
+                    <span style="color: #ea623a;" v-if="box">{{box.TypeName}} {{box.CabinetNumber}}-{{box.SerialNumber}}号箱</span>
+                  </div>
+                </div>
               </mn-card-body>
             </mn-card-item>
             <mn-card-item>
