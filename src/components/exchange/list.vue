@@ -77,6 +77,14 @@
                 </div>
               </mn-card-body>
             </mn-card-item>
+             <mn-card-item>
+              <mn-card-prefix>
+                <mn-label>订单编号</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+              {{item.zitiOrderNum}}
+              </mn-card-body>
+            </mn-card-item>
             <mn-card-item>
               <mn-card-prefix>
                 <mn-label>提货时间</mn-label>
