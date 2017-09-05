@@ -129,7 +129,7 @@
           this.showModal = false
         } catch (error) {
           this.showModal = false
-          this.messageLayer = Message.create({ type: 'error', message: error.response.message }).show()
+          this.messageLayer = Message.create({ type: 'error', message: error.response.data.message }).show()
         }
 
         this.setFormLoading(false)
