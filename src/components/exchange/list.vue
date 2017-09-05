@@ -30,7 +30,7 @@
               </mn-card-prefix>
               <mn-card-body>
                 <div>{{token.phone ? token.phone : '请先登录'}}</div>
-                <div @click="toggleSign" class="toggle-btn">{{token.phone ? '切换账号' : '登录'}}</div>
+                <div @click="toggleSign" class="toggle-btn">{{token.phone ? '退出登录' : '登录'}}</div>
               </mn-card-body>
             </mn-card-item>
           </mn-card>
@@ -312,7 +312,11 @@
     },
     methods: {
       toggleSign () {
-        this.toggleModal = !this.toggleModal
+        if (this.token.phone) {
+          this.$store.commit('CLEAR_EX_AUTH_TOKEN')
+        } else {
+          this.toggleModal = !this.toggleModal
+        }
       },
       onSelectType (item) {
         this.activeType = item.value
