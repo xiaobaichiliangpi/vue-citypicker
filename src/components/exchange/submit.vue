@@ -345,6 +345,11 @@
       height: 100%;
     }
   }
+
+  &-info {
+    flex: 0 0 2rem;
+    text-align: right;
+  }
 }
 
 .user-info {
