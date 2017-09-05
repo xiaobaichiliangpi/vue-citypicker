@@ -229,6 +229,11 @@
           </mn-card>
         </div>
       </mn-container>
+
+      <div class="empty-order" v-if="(stationOrders && stationOrders.length === 0) || (expressOrders && expressOrders.length === 0)">
+        <img src="../../assets/empty_order.png">
+        <p>目前还没有订单</p>
+      </div>
     </mn-scroller>
 
     <mn-modal :visible.sync="showModal" class="sign-modal" style="height: 60%;">
@@ -545,6 +550,17 @@
     padding: 2px 1rem;
     border-radius: 3px;
     font-size: 0.875rem;
+  }
+}
+
+.empty-order {
+  text-align: center;
+  color: #999;
+  font-size: 1.2rem;
+
+  img {
+    display: block;
+    width: 100%;
   }
 }
 </style>
