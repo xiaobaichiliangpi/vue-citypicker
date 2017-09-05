@@ -136,7 +136,7 @@
                 <mn-label>配送时间</mn-label>
               </mn-card-prefix>
               <mn-card-body>
-              {{item.shippingTime}}
+              {{item.shippingTime}} {{item.timeSlot}}
               </mn-card-body>
             </mn-card-item>
           </mn-card>
