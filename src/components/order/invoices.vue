@@ -111,9 +111,6 @@
         invoicesType: [{
           label: '增值税普通发票',
           value: 1
-        }, {
-          label: '增值税专用发票',
-          value: 2
         }],
         activeType: 1,
         activeInvoices: undefined,
