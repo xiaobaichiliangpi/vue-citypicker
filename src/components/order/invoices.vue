@@ -18,7 +18,12 @@
           <mn-card>
             <mn-card-item>
               <mn-card-body>
-                <div v-for="(item, key) in invoicesType" :key="key" :class="['invoicesType-item', {'is-selected': item.value === activeType}]" @click="onSelectType(item)">
+                <div
+                  v-for="(item, key) in invoicesType"
+                  :key="key"
+                  :class="['invoicesType-item', {'is-selected': item.value === activeType}]"
+                  @click="onSelectType(item)"
+                  v-if="item.value === 2 ? receiptFlag : true">
                   {{item.label}}
                 </div>
               </mn-card-body>
@@ -111,6 +116,9 @@
         invoicesType: [{
           label: '增值税普通发票',
           value: 1
+        }, {
+          label: '增值税专用发票',
+          value: 2
         }],
         activeType: 1,
         activeInvoices: undefined,
@@ -120,7 +128,8 @@
     },
     computed: {
       ...mapGetters({
-        invoices: 'invoices'
+        invoices: 'invoices',
+        order: 'order'
       }),
       disableSubmit () {
         if (!this.needInvoices) return false
@@ -130,6 +139,11 @@
         } else if (this.activeType === 2) {
           return !this.activeInvoices
         }
+      },
+      receiptFlag () {
+        return this.order.some(item => {
+          return item.specialReceiptFlag === 1
+        })
       }
     },
     methods: {

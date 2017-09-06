@@ -27,7 +27,7 @@
                 <span class="price-main">{{item.price}}</span>
               </div>
               <div class="products-action">
-                <mn-counter v-model="item.saledNum" :min="0" v-if="item.saledNum > 0" :max="99"></mn-counter>
+                <mn-counter v-model="item.count" :min="0" v-if="item.count > 0" :max="99"></mn-counter>
                 <div class="cart-btn" v-else @click="addToCart(item)">
                   <mn-icon :name="icons.cart" :scale="0.8"></mn-icon>
                 </div>
@@ -42,7 +42,7 @@
     <div class="cart-bottom">
       <div class="cart-info">
         <div class="cart-total">小计: ¥{{totalAmount}}</div>
-        <div class="cart-count">已选{{products && products.filter(item => item.saledNum > 0).length}}种, 共{{totalNum}}件</div>
+        <div class="cart-count">已选{{products && products.filter(item => item.count > 0).length}}种, 共{{totalNum}}件</div>
       </div>
       <div class="cart-btn" @click="submitOrder" :class="[{'is-disabled': totalAmount <= 0}]">确认购买({{totalNum}})</div>
     </div>
@@ -88,14 +88,15 @@
       totalAmount () {
         let total = 0
         this.products && this.products.forEach(item => {
-          total += item.saledNum * item.price
+          total += item.count * item.price
         })
         return total.toFixed(2)
       },
       totalNum () {
         let total = 0
         this.products && this.products.forEach(item => {
-          total += item.saledNum
+          !item.count && (item.count = 0)
+          total += item.count
         })
         return total
       },
@@ -121,12 +122,12 @@
 
         if (this.checkSign()) {
           this.$store.commit('UPDATE_ORDER', this.products.filter(item => {
-            return item.saledNum > 0
+            return item.count > 0
           }))
           window.zhuge.track('确认购买', {
             '触发位置': '提货卡购买页',
             '订单金额': this.totalAmount,
-            '已选种类': this.products && this.products.filter(item => item.saledNum > 0).length,
+            '已选种类': this.products && this.products.filter(item => item.count > 0).length,
             '商品数量': this.totalNum
           })
           this.$router.push({name: 'orderSubmit'})
@@ -176,11 +177,11 @@
             return val.pickupcardProductId === item.pickupcardProductId
           })
 
-          product && (product.saledNum = item.saledNum)
+          product && (product.count = item.count)
         })
       },
       addToCart (item) {
-        item.saledNum = 1
+        item.count = 1
         window.zhuge.track('加入购物车', {
           '触发位置': '提货卡购买页',
           '商品名称': item.productName,

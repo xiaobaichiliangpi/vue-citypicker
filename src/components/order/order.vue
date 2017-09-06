@@ -37,7 +37,7 @@
                 </div>
                 <div class="order-products-count">
                   <div>¥{{item.price}}</div>
-                  <div>×{{item.saledNum}}</div>
+                  <div>×{{item.count}}</div>
                 </div>
               </mn-card-body>
             </mn-card-item>
@@ -124,21 +124,21 @@
       totalAmount () {
         let total = 0
         this.order && this.order.forEach(item => {
-          total += item.saledNum * item.price
+          total += item.count * item.price
         })
         return total.toFixed(2)
       },
       totalNum () {
         let total = 0
         this.order && this.order.forEach(item => {
-          total += item.saledNum
+          total += item.count
         })
         return total
       },
       products () {
         let products = {}
         this.order.forEach(item => {
-          products[item.pickupcardProductId] = item.saledNum
+          products[item.pickupcardProductId] = item.count
         })
         return products
       }
