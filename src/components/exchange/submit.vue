@@ -354,6 +354,10 @@
     }
   }
 
+  &-title {
+    flex: 1;
+  }
+
   &-info {
     flex: 0 0 2rem;
     text-align: right;

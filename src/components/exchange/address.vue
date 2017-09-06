@@ -16,12 +16,15 @@
               </mn-card-prefix>
               <mn-card-body>
                 <div class="name">
-                  <p>{{ item.WorkStationName }}</p>
+                  <p :class="[{'disable-station': !item.IsEnable}]">{{ item.WorkStationName }}</p>
                   <mn-icon :name="icons.snowy"
                     :class="{ 'is-freeze': item.HasFreezeBox }"
                     ></mn-icon>
                   <span class="tag is-default"
                     v-if="item.IsDefault">默认</span>
+                  <span class="tag is-default"
+                  style="background: #ccc;"
+                  v-if="!item.IsEnable">暂停</span>
                 </div>
 
                 <p class="address">{{ item.ShippingAddress }}</p>
@@ -43,9 +46,7 @@
                   </div>
                   <div
                   class="address-tool-delete"
-                  v-if="pageType === 'addressManage' || (workstation.WorkStationId
-                  ? item.WorkStationId !== workstation.WorkStationId
-                  : !item.IsDefault)"
+                  v-if="pageType === 'addressManage' || (item.WorkStationId !== workstation.WorkStationId)"
                   @click="onDelete(item)">
                     <span>删除</span>
                   </div>
@@ -106,6 +107,8 @@
         if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
       },
       onChooseAddress (item) {
+        if (!item.IsEnable) return
+
         if (this.pageType === 'addressManage') return
 
         this.$store.commit('UPDATE_ORDER_WORKSTATION', item)
@@ -174,6 +177,7 @@
           break
       }
 
+      if (!this.workstation.IsEnable) this.$store.commit('UPDATE_ORDER_WORKSTATION', {})
       this.listUserAddress()
     },
     beforeDestroy () {
@@ -307,5 +311,9 @@
       padding: 0.1rem 1rem;
       border: 1px solid #333;
     }
+  }
+
+  .disable-station {
+    color: #ccc;
   }
 </style>

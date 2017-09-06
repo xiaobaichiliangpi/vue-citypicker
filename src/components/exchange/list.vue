@@ -314,6 +314,10 @@
       toggleSign () {
         if (this.token.phone) {
           this.$store.commit('CLEAR_EX_AUTH_TOKEN')
+          this.alertLayer = Alert.create({
+            title: '退出成功',
+            cancelText: '好的'
+          }).show()
         } else {
           this.toggleModal = !this.toggleModal
         }
@@ -328,17 +332,17 @@
           phoneNum: this.models.phone
         }
         this.sendingCode = true
+        this.timer = setInterval(() => {
+          this.secondDown -= 1
+          if (this.secondDown === 0) {
+            clearInterval(this.timer)
+            this.timer = undefined
+            this.secondDown = 60
+            this.sendingCode = false
+          }
+        }, 1000)
         smsCode(params)
         .then(response => {
-          this.timer = setInterval(() => {
-            this.secondDown -= 1
-            if (this.secondDown === 0) {
-              clearInterval(this.timer)
-              this.timer = undefined
-              this.secondDown = 60
-              this.sendingCode = false
-            }
-          }, 1000)
         })
         .catch(error => {
           this.sendingCode = false
