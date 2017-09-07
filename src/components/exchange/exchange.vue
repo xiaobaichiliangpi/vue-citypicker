@@ -100,7 +100,7 @@
           console.log(error.response)
           if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
           this.alertLayer = Alert.create({
-            title: '出错了~',
+            title: error.response.data.error === '1' ? '兑换出错~' : '该卡片还不能兑换哦~',
             description: error.response.data.message,
             cancelText: '好的'
           }).show()
