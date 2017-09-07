@@ -63,6 +63,13 @@
         <div v-if="stationOrders && activeType === 1">
           <mn-card class="product" v-for="(item, key) in stationOrders" :key="key">
             <mn-card-item>
+              <mn-card-prefix>
+                <mn-label>提货商品</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item>
               <mn-card-prefix class="product-img">
                 <div class="img" style="width: 80px; height: 80px;background: #ccc;">
                   <img :src="item.imagePath">
@@ -77,7 +84,7 @@
                 </div>
               </mn-card-body>
             </mn-card-item>
-             <mn-card-item>
+            <mn-card-item>
               <mn-card-prefix>
                 <mn-label>订单编号</mn-label>
               </mn-card-prefix>
@@ -152,6 +159,13 @@
 
         <div v-if="expressOrders && activeType === 2">
           <mn-card class="product" v-for="(item, key) in expressOrders" :key="key">
+            <mn-card-item>
+              <mn-card-prefix>
+                <mn-label>提货商品</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+              </mn-card-body>
+            </mn-card-item>
             <mn-card-item>
               <mn-card-prefix class="product-img">
                 <div class="img" style="width: 80px; height: 80px;background: #ccc;">
