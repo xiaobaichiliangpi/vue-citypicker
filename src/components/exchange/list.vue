@@ -1,6 +1,24 @@
 <template>
   <div>
     <sign-modal :openModal="toggleModal"></sign-modal>
+    <mn-modal :visible.sync="imageCodeModal" class="sign-modal">
+      <mn-section>
+        <mn-card style="margin-bottom: 0;">
+          <mn-card-item>
+            <mn-card-body class="image-code">
+              <mn-input v-model="imageVerifyCode" placeholder="输入图片验证码"></mn-input>
+              <div style="margin-left: 0.5rem;width: 100px; height: 30px; background: #ccc;" @click="updateImageCode">
+                <img :src="`http://10.1.62.43:9010/pickupcard/api/pickupcardmanage/imageverifycode/${imageCode}`" v-if="imageCode">
+              </div>
+            </mn-card-body>
+          </mn-card-item>
+        </mn-card>
+
+        <div class="submit-btn" style="margin-bottom: 1rem;">
+          <mn-btn theme="primary" block :disabled="!imageVerifyCode" @click="smsCode">发送</mn-btn>
+        </div>
+      </mn-section>
+    </mn-modal>
     <mn-scroller>
       <mn-container>
         <div>
@@ -48,7 +66,7 @@
               <mn-card-body class="verify-code">
                 <mn-input v-model="models.verifyCode"
                  placeholder="请输入短信验证码"></mn-input>
-                 <div :class="['verify-code-btn', {'is-disabled': sendingCode || !rightPhone}]" @click="smsCode">
+                 <div :class="['verify-code-btn', {'is-disabled': sendingCode || !rightPhone}]" @click="sendMessageCode">
                    {{sendingCode ? `${secondDown}s后重试` : '获取验证码'}}
                  </div>
               </mn-card-body>
@@ -273,7 +291,7 @@
   import modal from 'vue-human/suites/modal'
   import SignModal from '../sign/exchangeSign.vue'
   import { mapGetters } from 'vuex'
-  import { smsCode, listByPhone, listByAccount, pickUpPsw } from '../../axios/exchange'
+  import { smsCode, listByPhone, listByAccount, pickUpPsw, updateImageCode } from '../../axios/exchange'
   import LoadingMask from 'vue-human/utils/LoadingMask'
   import Alert from 'vue-human/utils/Alert'
 
@@ -321,7 +339,10 @@
         timer: undefined,
         showModal: false,
         trackList: undefined,
-        gettingPsw: false
+        gettingPsw: false,
+        imageCodeModal: false,
+        imageVerifyCode: undefined,
+        imageCode: undefined
       }
     },
     methods: {
@@ -340,23 +361,32 @@
         this.activeType = item.value
       },
       smsCode () {
-        if (this.sendingCode || !this.rightPhone) return
+        if (this.sendingCode || !this.rightPhone || !this.imageVerifyCode) return
 
         const params = {
-          phoneNum: this.models.phone
+          phoneNum: this.models.phone,
+          imageCode: this.imageCode,
+          verifycode: this.imageVerifyCode
         }
         this.sendingCode = true
-        this.timer = setInterval(() => {
-          this.secondDown -= 1
-          if (this.secondDown === 0) {
-            clearInterval(this.timer)
-            this.timer = undefined
-            this.secondDown = 60
-            this.sendingCode = false
-          }
-        }, 1000)
+
         smsCode(params)
         .then(response => {
+          this.timer = setInterval(() => {
+            this.secondDown -= 1
+            if (this.secondDown === 0) {
+              clearInterval(this.timer)
+              this.timer = undefined
+              this.secondDown = 60
+              this.sendingCode = false
+            }
+          }, 1000)
+          this.imageVerifyCode = undefined
+          this.imageCodeModal = false
+          this.alertLayer = Alert.create({
+            title: '发送成功~',
+            cancelText: '好的'
+          }).show()
         })
         .catch(error => {
           this.sendingCode = false
@@ -415,7 +445,7 @@
         }
       },
       searchTrack (item) {
-        if (Array.isArray(item.trackList)) {
+        if (Array.isArray(item.trackList) && item.trackList.length > 0) {
           this.trackList = [...item.trackList].reverse()
         } else {
           this.trackList = undefined
@@ -442,6 +472,19 @@
         .catch(error => {
           console.log(error)
           this.gettingPsw = false
+        })
+      },
+      sendMessageCode () {
+        this.updateImageCode()
+        this.imageCodeModal = true
+      },
+      updateImageCode () {
+        updateImageCode().then(response => {
+          console.log(response)
+          this.imageCode = response.data.message
+        })
+        .catch(error => {
+          console.log(error)
         })
       }
     },
@@ -583,6 +626,16 @@
   img {
     display: block;
     width: 100%;
+  }
+}
+
+.image-code {
+  display: flex;
+  align-items: center;
+
+  img {
+    width: 100px;
+    height: 30px;
   }
 }
 </style>

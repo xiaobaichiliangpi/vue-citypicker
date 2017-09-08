@@ -124,3 +124,10 @@ export function pickUpPsw (params = {}) {
     params: params
   })
 }
+
+export function updateImageCode (params = {}) {
+  return axios({
+    method: 'GET',
+    url: `/pickupcard/api/pickupcardmanage/generateverifycode`
+  })
+}
