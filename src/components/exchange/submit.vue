@@ -23,7 +23,7 @@
 
         <div>
           <mn-section class="invoicesType">
-            <h2 style="font-size: 1rem;background: #fff;padding-left: 1rem;">提货方式</h2>
+            <h2 style="font-size: 1rem;background: #fff;padding-left: 1rem;padding-top: 0.8rem;">提货方式</h2>
             <mn-card>
               <mn-card-item>
                 <mn-card-body>
