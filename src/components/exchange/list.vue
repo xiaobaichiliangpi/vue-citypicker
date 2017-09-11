@@ -350,6 +350,7 @@
       toggleSign () {
         if (this.token.phone) {
           this.$store.commit('CLEAR_EX_AUTH_TOKEN')
+          this.stationOrders = undefined
           this.alertLayer = Alert.create({
             title: '退出成功',
             cancelText: '好的'
