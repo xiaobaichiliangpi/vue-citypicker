@@ -7,8 +7,9 @@
           <mn-card-item>
             <mn-card-body class="image-code">
               <mn-input v-model="imageVerifyCode" placeholder="输入图片验证码"></mn-input>
-              <div style="margin-left: 0.5rem;width: 100px; height: 30px; background: #ccc;" @click="updateImageCode">
-                <img :src="`http://10.1.62.43:9010/pickupcard/api/pickupcardmanage/imageverifycode/${imageCode}`" v-if="imageCode">
+              <div class="image-code-box" style="margin-left: 0.5rem;width: 100px; height: 30px; background: #ccc;" @click="updateImageCode">
+                <mn-loading-icon></mn-loading-icon>
+                <img :src="`/pickupcard/api/pickupcardmanage/imageverifycode/${imageCode}`" v-if="imageCode">
               </div>
             </mn-card-body>
           </mn-card-item>
@@ -262,7 +263,7 @@
         </div>
       </mn-container>
 
-      <div class="empty-order" v-if="(stationOrders && stationOrders.length === 0) || (expressOrders && expressOrders.length === 0)">
+      <div class="empty-order" v-if="(activeType === 1 && stationOrders && stationOrders.length === 0) || (activeType === 2 && expressOrders && expressOrders.length === 0)">
         <img src="../../assets/empty_order.png">
         <p>目前还没有订单</p>
       </div>
@@ -479,6 +480,7 @@
         this.imageCodeModal = true
       },
       updateImageCode () {
+        this.imageCode = undefined
         updateImageCode().then(response => {
           console.log(response)
           this.imageCode = response.data.message
@@ -621,7 +623,7 @@
 .empty-order {
   text-align: center;
   color: #999;
-  font-size: 1.2rem;
+  font-size: 1rem;
 
   img {
     display: block;
@@ -636,6 +638,24 @@
   img {
     width: 100px;
     height: 30px;
+    position: relative;
+    z-index: 9;
+  }
+
+  &-box {
+    position: relative;
+    width: 100px;
+    height: 30px;
+    flex-shrink: 0;
+  }
+
+  .mn-loading-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -12px;
+    margin-left: -10px;
+    color: #666;
   }
 }
 </style>
