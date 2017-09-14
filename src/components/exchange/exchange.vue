@@ -2,7 +2,7 @@
   <mn-scroller class="exchange">
     <mn-container>
       <div class="exchange-header">
-        <img src="../../assets/banner1-1.jpg">
+        <img src="../../assets/banner2-1.jpg">
       </div>
       <mn-form :validate="$v" @success="success" ref="form" class="address">
         <mn-card>
