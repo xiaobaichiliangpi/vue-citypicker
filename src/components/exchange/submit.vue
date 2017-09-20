@@ -39,6 +39,10 @@
               </mn-card-item>
             </mn-card>
           </mn-section>
+
+          <mn-section v-if="activeType === 2" style="color: #ea623a;padding-left: 1rem;font-size: 0.875rem;">
+            温馨提示:*站点自提可明日送达, 快递5个工作日内发货
+          </mn-section>
         </div>
         <div v-if="activeType === 1">
           <mn-card class="user-info">
