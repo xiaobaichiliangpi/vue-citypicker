@@ -171,7 +171,7 @@
       }
     },
     created () {
-      if (!this.workstation.IsEnable) this.$store.commit('UPDATE_ORDER_WORKSTATION', {})
+      if (this.workstation && !this.workstation.IsEnable) this.$store.commit('UPDATE_ORDER_WORKSTATION', {})
       this.listUserAddress()
     },
     beforeDestroy () {
