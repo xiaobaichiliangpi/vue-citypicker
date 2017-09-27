@@ -171,12 +171,6 @@
       }
     },
     created () {
-      switch (this.pageType) {
-        case 'addressManage':
-          this.isEdit = true
-          break
-      }
-
       if (!this.workstation.IsEnable) this.$store.commit('UPDATE_ORDER_WORKSTATION', {})
       this.listUserAddress()
     },
