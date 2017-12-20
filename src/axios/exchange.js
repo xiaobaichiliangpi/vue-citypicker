@@ -131,3 +131,11 @@ export function updateImageCode (params = {}) {
     url: `/pickupcard/api/pickupcardmanage/generateverifycode`
   })
 }
+
+export function contact (params = {}) {
+  return axios({
+    method: 'POST',
+    url: `/pickupcard/api/interestinguser/register`,
+    data: params
+  })
+}
