@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div>
+  <div style="height: 100%;">
+    <div style="height: 100%;position: relative;">
       <mn-scroller>
         <p class="loading" v-if="!address"><mn-loading-icon></mn-loading-icon>正在加载中</p>
 
