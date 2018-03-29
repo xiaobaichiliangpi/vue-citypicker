@@ -62,5 +62,13 @@ export default [
       title: '我的提货记录'
     },
     component: resolve => { require(['../components/exchange/list'], resolve) }
+  },
+  {
+    name: 'getContact',
+    path: '/getcontact',
+    meta: {
+      title: '食行生鲜'
+    },
+    component: resolve => { require(['../components/contact'], resolve) }
   }
 ]
