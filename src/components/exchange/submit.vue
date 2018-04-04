@@ -1,29 +1,60 @@
 <template>
-  <div>
+  <div v-if="product.length">
     <sign-modal :openModal="toggleModal"></sign-modal>
     <mn-scroller>
       <mn-container>
         <mn-card class="product">
-          <mn-card-item>
+          <h2 v-if="!models.consigneeProductId">请选择您要兑换的商品</h2>
+          <h2 v-else>商品清单</h2>
+          <!-- <mn-card-item v-for="(item, index) of product" :key="index">
             <mn-card-prefix class="product-img">
               <div class="img" style="width: 80px; height: 80px;background: #ccc;">
-                <img :src="product.imagePath">
+                <img :src="item.imagePath">
               </div>
             </mn-card-prefix>
             <mn-card-body>
               <div class="product-title">
-                {{product.productName}}
+                {{item.productName}}
               </div>
               <div class="product-info">
-                <span style="color: #999; font-size: 0.875rem;">×{{product.number}}</span>
+                <span style="color: #999; font-size: 0.875rem;">×{{item.number}}</span>
               </div>
             </mn-card-body>
-          </mn-card-item>
+          </mn-card-item> -->
+          <div :class="['radio-group', {'has-bottom': product.length - 1 > key}]"
+            v-for="(item, key) in product"
+            :key="key">
+          <mn-radio :data="item.productId"
+            v-model="models.consigneeProductId"
+            :class="{'selected': item.productId === models.consigneeProductId}">
+            <div class="product-item">
+              <div class="product-img">
+                <div class="img">
+                  <img :src="item.imagePath">
+                </div>
+              </div>
+              <div :class="['product-detail']">
+                <div class="product-title">
+                  {{item.productName}}
+                </div>
+                <div class="product-info">
+                  <span style="font-size: 0.875rem;">×{{item.number}}</span>
+                </div>
+              </div>
+            </div>
+          </mn-radio>
+          <div :class="['product-intro', {'show-intro': showDetailId === key }]">
+            <div class="product-intro-title" @click="onOpenDetail(key)">商品概述</div>
+            <div :class="['product-intro-text']">{{ item.productName }}</div>
+          </div>
+          </div>
         </mn-card>
 
         <div>
           <mn-section class="invoicesType">
-            <h2 style="font-size: 1rem;background: #fff;padding-left: 1rem;padding-top: 0.8rem;">提货方式</h2>
+            <h2 style="font-weight: 500;font-size: 0.84rem;background: #fff;color:#333;padding-left: .75rem;padding-top: 0.8125rem;">
+              请选择提货方式
+            </h2>
             <mn-card>
               <mn-card-item>
                 <mn-card-body>
@@ -32,7 +63,7 @@
                     :key="key"
                     :class="['pickType-item', {'is-selected': item.value === activeType}]"
                     @click="onSelectType(item)"
-                    v-if="(item.value === product.pickupMethod) || (product.pickupMethod === 3)">
+                    v-if="(item.value === product[0].pickupMethod) || (product[0].pickupMethod === 3)">
                     {{item.label}}
                   </div>
                 </mn-card-body>
@@ -44,7 +75,7 @@
             温馨提示:*站点自提可明日送达, 快递5个工作日内发货
           </mn-section>
         </div>
-        <div v-if="activeType === 1">
+        <div v-if="activeType === 1" class="pb-4">
           <mn-card class="user-info">
             <mn-card-item>
               <mn-card-prefix>
@@ -84,7 +115,7 @@
           </div>
         </div>
 
-        <mn-form :validate="$v" @success="success" ref="form" class="address" v-if="activeType === 2">
+        <mn-form :validate="$v" @success="success" ref="form" class="address pb-4" v-if="activeType === 2">
           <mn-card>
             <mn-card-item>
               <mn-card-prefix>
@@ -102,6 +133,16 @@
               <mn-card-body>
                 <mn-input v-model="models.consigneePhonenum"
                  placeholder="收货人电话"></mn-input>
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item type="link" @click="chooseLocation">
+              <mn-card-prefix>
+                <mn-label>所在地区</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+                <div :class="['location-default', {'location': models.consigneeLocation}]">
+                  {{models.consigneeLocation ? models.consigneeLocation : '请选择'}}
+                </div>
               </mn-card-body>
             </mn-card-item>
             <mn-card-item>
@@ -140,11 +181,18 @@
         </mn-form>
       </mn-container>
     </mn-scroller>
+    <city-picker
+      :visible.sync="showPicker"
+      :cityArray="cityArray"
+      @close="onClose"
+      @success="onSuccess">
+    </city-picker>
   </div>
 </template>
 
 <script>
   import input from 'vue-human/suites/input'
+  import radio from 'vue-human/suites/radio'
   import {
     required } from 'vuelidate/lib/validators'
   import SignModal from '../sign/exchangeSign.vue'
@@ -152,11 +200,16 @@
   import { getProductByCard, pickupProduct } from '../../axios/exchange'
   import Alert from 'vue-human/utils/Alert'
   import LoadingMask from 'vue-human/utils/LoadingMask'
+  import CityPicker from '../common/picker.vue'
+  import CityArray from '../common/areaData.js'
+  // import Toast from '../common/toast'
 
   export default {
     components: {
       ...input.map(),
-      SignModal
+      ...radio.map(),
+      SignModal,
+      CityPicker
     },
     validations: {
       models: {
@@ -192,7 +245,9 @@
         models: {
           consignee: undefined,
           consigneeAddress: undefined,
-          consigneePhonenum: undefined
+          consigneePhonenum: undefined,
+          consigneeLocation: undefined,
+          consigneeProductId: undefined
         },
         pickType: [{
           label: '站点自提',
@@ -203,11 +258,22 @@
         }],
         activeType: undefined,
         toggleModal: false,
-        product: {}
+        product: [],
+        showDetailId: -1,
+        showPicker: false,
+        cityArray: CityArray
       }
     },
     methods: {
       success () {
+        // 未选择商品
+        if (!this.models.consigneeProductId) {
+          this.alertLayer = Alert.create({
+            title: '请选择兑换商品',
+            cancelText: '好的'
+          }).show()
+          return
+        }
         const data = {
           cardNum: this.$route.query.cardNum,
           passwd: this.$route.query.passwd,
@@ -303,15 +369,50 @@
       getProductByCard () {
         getProductByCard(this.$route.query.cardNum)
         .then(response => {
-          this.product = response.data.target[0]
+          // this.product = response.data.target
+          response.data.target[0].productId = 1 // test
+          let data = JSON.parse(JSON.stringify(response.data.target[0]))
+          data.productId = 2
+          this.product = [response.data.target[0], data]  // test
+          // this.product = [data]  // test
+
+          // one product
+          if (this.product.length === 1) {
+            this.models.consigneeProductId = this.product[0].productId
+          }
           this.activeType = this.vuexActiveType
+          this.destroyLoadingLayer()
         })
         .catch(error => {
           console.log(error)
+          this.destroyLoadingLayer()
         })
+      },
+      createLoadingMask () {
+        this.loadingMaskLayer = LoadingMask.create().show()
+      },
+      destroyLoadingLayer () {
+        if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
+      },
+      onOpenDetail (val) {
+        this.showDetailId !== -1 ? (this.showDetailId = -1) : (this.showDetailId = val)
+      },
+      chooseLocation () {
+        this.showPicker = true
+      },
+      onClose () {
+        this.showPicker = false
+      },
+      onSuccess (val) {
+        console.log(val)
+        this.models.consigneeLocation = val.map(val => {
+          return val.text
+        }).join('')
+        this.onClose()
       }
     },
     created () {
+      this.createLoadingMask()
       this.getProductByCard()
     },
     beforeDestroy () {
@@ -331,11 +432,12 @@
 <style lang="scss" scoped>
 .pickType-item {
   display: inline-block;
-  padding: 0.2rem 0.5rem;
+  padding: .5rem .75rem;
   border: 1px solid #666;
   color: #666;
   border-radius: 3px;
   margin-right: 0.5rem;
+  font-size: .875rem;
 
   &.is-selected {
     color: #49ab34;
@@ -344,13 +446,49 @@
 }
 
 .product {
-  .mn-card-body {
+
+  h2 {
+    font-size: 0.84rem;
+    line-height: 1;
+    padding: 0.75rem 0 .28rem 0.66rem;
+    color: #333;
+    font-weight: 500;
+  }
+
+  .mn-card-body, .product-item, .product-detail {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: 0;
+  }
+
+  .product-item {
+    justify-content: flex-start;
+  }
+
+  .product-detail {
+    flex: 1;
+    min-height: 3.75rem;
+    padding: .625rem 0;
+    padding-right: 0.625rem;
+    box-sizing: content-box;
+  }
+
+  .has-bottom {
+    border-bottom: 1px solid #eee;
   }
 
   &-img {
+    margin: 0 .65625rem 0 .875rem !important;
+
+    .img {
+      border: 1px solid #eee;
+      border-radius: .3125rem;
+      overflow: hidden;
+      width: 3.75rem;
+      height: 3.75rem;
+    }
+
     img {
       display: block;
       width: 100%;
@@ -360,6 +498,7 @@
 
   &-title {
     flex: 1;
+    font-size: .75rem;
   }
 
   &-info {
@@ -380,6 +519,101 @@
       color: #49ab34;
       text-decoration: underline;
     }
+  }
+}
+
+.mn-radio-label {
+  .mn-card-item {
+    padding: 0;
+
+
+  }
+}
+
+.radio-group {
+  color: #999;
+}
+
+.selected {
+  color: #333;
+}
+
+.invoicesType {
+  .mn-card-item {
+    padding: .625rem 0 .875rem .75rem;
+  }
+}
+
+.product-intro {
+  overflow: hidden;
+
+  &-title {
+    font-size: .84rem;
+    color: #999;
+    padding: .9375rem 0.625rem .9375rem .625rem;
+    position: relative;
+
+    &::after {
+      content: ' ';
+      position: absolute;
+      top: 50%;
+      right: 0.625rem;
+      display: block;
+      border-width: 2px 2px 0 0;
+      border-style: solid;
+      border-color: #c8c8cd;
+      transform: rotate(135deg) translateY(50%);
+      height: 8px;
+      width: 8px;
+    }
+  }
+
+  &-text {
+    max-height: 0;
+    transition: all .3s ease;
+    font-size: .8125rem;
+    color: #333;
+    padding: 0 1rem 0 .5625rem;
+  }
+}
+
+.show-intro {
+
+  .product-intro-title {
+    &::after {
+      transform: rotate(-45deg) translateY(35%) translateX(-4px);
+    }
+  }
+
+  .product-intro-text {
+    max-height: 4rem;
+    padding: .75rem 1rem .75rem .5625rem;
+  }
+}
+
+.pb-4 {
+  padding-bottom: 2rem;
+}
+.location-default {
+  color: #939393;
+  font-weight: 600;
+  // font-family: sans-serif;
+}
+.location {
+  color: #333;
+  font-weight: 400;
+}
+</style>
+
+<style lang="scss">
+.mn-radio-label {
+  display: flex;
+  align-items: center;
+  padding: 0 .625rem;
+  padding-right: 0;
+
+  span:last-child {
+    flex: 1;
   }
 }
 </style>
