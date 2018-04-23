@@ -66,7 +66,8 @@
       async listUserReceiverTime () {
         const params = {
           workStationId: this.$route.params.workStationId,
-          cardNum: this.$route.query.cardNum
+          cardNum: this.$route.query.cardNum,
+          RealProductId: this.$route.query.realProductId
         }
         const response = await listUserReceiverTime(params)
         this.receiveTime = response.data.target

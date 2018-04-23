@@ -24,9 +24,9 @@
           <div :class="['radio-group', {'has-bottom': product.length - 1 > key}]"
             v-for="(item, key) in product"
             :key="key">
-          <mn-radio :data="item.productId"
+          <mn-radio :data="item.realProductId"
             v-model="models.consigneeProductId"
-            :class="{'selected': item.productId === models.consigneeProductId}">
+            :class="{'selected': item.realProductId === models.consigneeProductId}">
             <div class="product-item">
               <div class="product-img">
                 <div class="img">
@@ -170,6 +170,12 @@
           </mn-section-note>
 
           <mn-section-note>
+            <mn-helper :validate="$v.models.consigneeLocation">
+              <mn-helper-item name="required">请选择所在地区</mn-helper-item>
+            </mn-helper>
+          </mn-section-note>
+
+          <mn-section-note>
             <mn-helper :validate="$v.models.consigneeAddress">
               <mn-helper-item name="required">请填写详细地址</mn-helper-item>
             </mn-helper>
@@ -182,8 +188,9 @@
       </mn-container>
     </mn-scroller>
     <city-picker
+      v-if="realCityArray"
       :visible.sync="showPicker"
-      :cityArray="cityArray"
+      :cityArray="realCityArray"
       @close="onClose"
       @success="onSuccess">
     </city-picker>
@@ -216,6 +223,9 @@
         consignee: {
           required
         },
+        consigneeLocation: {
+          required
+        },
         consigneeAddress: {
           required
         },
@@ -237,7 +247,8 @@
         city: 'exCity',
         workstation: 'station',
         receivetime: 'receivetime',
-        vuexActiveType: 'activeType'
+        vuexActiveType: 'activeType',
+        productId: 'productId'
       })
     },
     data () {
@@ -261,7 +272,8 @@
         product: [],
         showDetailId: -1,
         showPicker: false,
-        cityArray: CityArray
+        cityArray: CityArray,
+        realCityArray: undefined
       }
     },
     methods: {
@@ -274,15 +286,19 @@
           }).show()
           return
         }
+        const { consigneeAddress, consigneeLocation, ...rest } = this.models
         const data = {
           cardNum: this.$route.query.cardNum,
           passwd: this.$route.query.passwd,
           pickupMethod: this.activeType,
+          realProductId: this.models.consigneeProductId,
           expressInput: {
-            ...this.models
+            consigneeAddress: consigneeLocation + consigneeAddress,
+            ...rest
           }
         }
-
+        console.log(data)
+        debugger
         this.pickupProduct(data)
       },
       stationSubmit () {
@@ -303,6 +319,7 @@
             cardNum: this.$route.query.cardNum,
             passwd: this.$route.query.passwd,
             pickupMethod: this.activeType,
+            realProductId: this.models.consigneeProductId,
             zitiInput: {
               addressId: this.workstation.AddressId,
               workstationId: this.workstation.WorkStationId,
@@ -336,7 +353,15 @@
         })
       },
       onSelectType (item) {
-        this.activeType = item.value
+        // this.activeType = item.value
+        if (!this.models.consigneeProductId) {
+          this.alertLayer = Alert.create({
+            title: '请选择要提取的商品',
+            cancelText: '好的'
+          }).show()
+        } else {
+          this.activeType = item.value
+        }
       },
       toggleSign () {
         if (this.token.phone) {
@@ -357,11 +382,15 @@
         }
       },
       chooseTime () {
-        if (this.workstation.WorkStationId) {
-          this.$router.push({name: 'exchangeReceiveTime', params: {workStationId: this.workstation.WorkStationId}, query: {cardNum: this.$route.query.cardNum}})
+        if (this.workstation.WorkStationId && this.models.consigneeProductId) {
+          this.$router.push({
+            name: 'exchangeReceiveTime',
+            params: {workStationId: this.workstation.WorkStationId},
+            query: {cardNum: this.$route.query.cardNum, realProductId: this.models.consigneeProductId}
+          })
         } else {
           this.alertLayer = Alert.create({
-            title: '请先选择自提站点',
+            title: this.models.consigneeProductId ? '请先选择自提站点' : '请选择要提取的商品',
             cancelText: '好的'
           }).show()
         }
@@ -369,16 +398,18 @@
       getProductByCard () {
         getProductByCard(this.$route.query.cardNum)
         .then(response => {
-          // this.product = response.data.target
-          response.data.target[0].productId = 1 // test
-          let data = JSON.parse(JSON.stringify(response.data.target[0]))
-          data.productId = 2
-          this.product = [response.data.target[0], data]  // test
+          this.product = response.data.target
+          // response.data.target[0].productId = 1 // test
+          // let data = JSON.parse(JSON.stringify(response.data.target[0]))
+          // data.productId = 2
+          // this.product = [response.data.target[0], data]  // test
           // this.product = [data]  // test
 
           // one product
           if (this.product.length === 1) {
-            this.models.consigneeProductId = this.product[0].productId
+            this.models.consigneeProductId = this.product[0].realProductId
+          } else {
+            this.models.consigneeProductId = this.productId
           }
           this.activeType = this.vuexActiveType
           this.destroyLoadingLayer()
@@ -398,25 +429,62 @@
         this.showDetailId !== -1 ? (this.showDetailId = -1) : (this.showDetailId = val)
       },
       chooseLocation () {
-        this.showPicker = true
+        this.onFreshCity()
+        this.$nextTick(() => {
+          this.showPicker = true
+        })
       },
       onClose () {
         this.showPicker = false
       },
       onSuccess (val) {
-        console.log(val)
+        // test address:exchange/submit?cardNum=75883793&passwd=505868
         this.models.consigneeLocation = val.map(val => {
           return val.text
         }).join('')
         this.onClose()
+      },
+      onFreshCity () {
+        const product = this.product.filter(val => {
+          return val.realProductId === this.models.consigneeProductId
+        })[0]
+        const tempCityArray = [null, null, this.cityArray[2]]
+        const tempProvince = []
+        const tempCity = {}
+        product.expressArea.forEach(val => {
+          let isProvince = /[1-9]{2}[0]{4}/.test(val.value)
+          if (isProvince) {
+            let province = this.cityArray[0].filter(item => {
+              return item.value === val.value
+            })[0]
+            tempProvince.push(province)
+            tempCity[val.value] = this.cityArray[1][val.value]
+          } else {
+            let provinceStr = `${val.value.substring(0, 2)}0000`
+            let province = this.cityArray[0].filter(item => {
+              return item.value === provinceStr
+            })[0]
+            tempProvince.push(province)
+            if (tempCity[provinceStr]) {
+              tempCity[provinceStr].push(val)
+            } else {
+              tempCity[provinceStr] = [val]
+            }
+          }
+        })
+        tempCityArray[0] = tempProvince
+        tempCityArray[1] = tempCity
+        this.realCityArray = tempCityArray
       }
     },
     created () {
+      console.log(this.cityArray)
       this.createLoadingMask()
       this.getProductByCard()
     },
     beforeDestroy () {
       this.$store.commit('UPDATE_PICK_TYPE', undefined)
+      this.$store.commit('UPDATE_PRODUCTID', this.models.consigneeProductId)
       if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
       if (this.alertLayer) this.alertLayer.destroy()
     },

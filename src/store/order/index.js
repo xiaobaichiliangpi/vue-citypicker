@@ -17,7 +17,8 @@ const state = {
   order: local.getOrder(),
   station: {},
   receivetime: {},
-  activeType: undefined
+  activeType: undefined,
+  productId: undefined
 }
 
 const getters = {
@@ -27,7 +28,8 @@ const getters = {
   order: state => state.order,
   station: state => state.station,
   receivetime: state => state.receivetime,
-  activeType: state => state.activeType
+  activeType: state => state.activeType,
+  productId: state => state.productId
 }
 
 export default {

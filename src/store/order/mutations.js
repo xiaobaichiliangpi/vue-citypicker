@@ -6,7 +6,9 @@ import {
   UPDATE_ORDER,
   UPDATE_ORDER_WORKSTATION,
   UPDATE_ORDER_RECEIVETIME,
-  UPDATE_PICK_TYPE } from '../mutation-types'
+  UPDATE_PICK_TYPE,
+  UPDATE_PRODUCTID
+} from '../mutation-types'
 
 export default {
   [UPDATE_ADDRESS] (state, address) {
@@ -29,5 +31,8 @@ export default {
   },
   [UPDATE_PICK_TYPE] (state, type) {
     state.activeType = type
+  },
+  [UPDATE_PRODUCTID] (state, id) {
+    state.productId = id
   }
 }
