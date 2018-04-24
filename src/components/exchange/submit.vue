@@ -45,7 +45,7 @@
           </mn-radio>
           <div :class="['product-intro', {'show-intro': showDetailId === key }]">
             <div class="product-intro-title" @click="onOpenDetail(key)">商品概述</div>
-            <div :class="['product-intro-text']">{{ item.productName }}</div>
+            <div :class="['product-intro-text']">{{ item.description }}</div>
           </div>
           </div>
         </mn-card>
@@ -62,7 +62,7 @@
                     v-for="(item, key) in pickType"
                     :key="key"
                     :class="['pickType-item', {'is-selected': item.value === activeType}]"
-                    @click="onSelectType(item)"
+                    @click="onSelectType(item.value)"
                     v-if="(item.value === product[0].pickupMethod) || (product[0].pickupMethod === 3)">
                     {{item.label}}
                   </div>
@@ -267,6 +267,13 @@
           label: '快递配送',
           value: 2
         }],
+        defaultType: [{
+          label: '站点自提',
+          value: 1
+        }, {
+          label: '快递配送',
+          value: 2
+        }],
         activeType: undefined,
         toggleModal: false,
         product: [],
@@ -350,7 +357,7 @@
           }).show()
         })
       },
-      onSelectType (item) {
+      onSelectType (value) {
         // this.activeType = item.value
         if (!this.models.consigneeProductId) {
           this.alertLayer = Alert.create({
@@ -358,7 +365,7 @@
             cancelText: '好的'
           }).show()
         } else {
-          this.activeType = item.value
+          this.activeType = value
         }
       },
       toggleSign () {
@@ -396,7 +403,9 @@
       getProductByCard () {
         getProductByCard(this.$route.query.cardNum)
         .then(response => {
-          this.product = response.data.target
+          this.product = response.data.target.filter(val => {
+            return val.deleteFlag !== 1
+          })
           // response.data.target[0].productId = 1 // test
           // let data = JSON.parse(JSON.stringify(response.data.target[0]))
           // data.productId = 2
@@ -451,18 +460,23 @@
         const tempCity = {}
         product.expressArea.forEach(val => {
           let isProvince = /[1-9]{2}[0]{4}/.test(val.value)
-          if (isProvince) {
+          if (isProvince) { // 省
             let province = this.cityArray[0].filter(item => {
               return item.value === val.value
             })[0]
-            tempProvince.push(province)
+            if (!this.provinceIsExist(tempProvince, province)) {
+              tempProvince.push(province)
+            }
+            // tempProvince.push(province)
             tempCity[val.value] = this.cityArray[1][val.value]
-          } else {
+          } else { // 市
             let provinceStr = `${val.value.substring(0, 2)}0000`
             let province = this.cityArray[0].filter(item => {
               return item.value === provinceStr
             })[0]
-            tempProvince.push(province)
+            if (!this.provinceIsExist(tempProvince, province)) {
+              tempProvince.push(province)
+            }
             if (tempCity[provinceStr]) {
               tempCity[provinceStr].push(val)
             } else {
@@ -473,6 +487,11 @@
         tempCityArray[0] = tempProvince
         tempCityArray[1] = tempCity
         this.realCityArray = tempCityArray
+      },
+      provinceIsExist (arr, province) {
+        return arr.filter(key => {
+          return key.value === province.value
+        }).length
       }
     },
     created () {
@@ -490,6 +509,28 @@
       'token.customerGuid' (val) {
         this.$store.commit('UPDATE_ORDER_RECEIVETIME', {})
         this.$store.commit('UPDATE_ORDER_WORKSTATION', {})
+      },
+      'models.consigneeProductId' (val) {
+        const data = this.product.filter(key => {
+          return key.realProductId === val
+        })[0]
+        switch (data.pickupMethod) {
+          case 1: {
+            this.pickType.splice(0, 2, this.defaultType[0])
+            break
+          }
+          case 2: {
+            this.pickType.splice(0, 2, this.defaultType[1])
+            break
+          }
+          case 3: {
+            this.pickType.splice(0, 2, ...this.defaultType)
+            break
+          }
+        }
+        this.$nextTick(() => {
+          this.onSelectType(data.pickupMethod)
+        })
       }
     }
   }
