@@ -6,5 +6,6 @@ module.exports = new WebpackDevRunner({
     '/sh': 'http://192.168.100.6:85',
     '/wx': 'http://192.168.100.6:85',
     '/pickupcard': 'http://sy-suz-srv31.suiyi.com.cn:9010'
-  }
+  },
+  assetsPublicPath: './'
 }).run()

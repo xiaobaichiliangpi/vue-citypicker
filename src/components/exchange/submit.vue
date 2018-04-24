@@ -297,8 +297,6 @@
             ...rest
           }
         }
-        console.log(data)
-        debugger
         this.pickupProduct(data)
       },
       stationSubmit () {

@@ -35,7 +35,8 @@
     },
     methods: {
       backHome () {
-        this.$router.go(-2)
+        // this.$router.go(-2)
+        this.$router.push({ name: 'exchange' })
       }
     },
     created () {
