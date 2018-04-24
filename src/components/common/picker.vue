@@ -60,6 +60,8 @@ export default new Element({
         [],
         []
       ],
+      lastArray: [],
+      lastResults: [],
       activeIndex: 0,
       defaultData: {
         text: '请选择',
@@ -131,6 +133,9 @@ export default new Element({
       this.$refs.box.style.transform = `translate(-${(this.activeIndex) * 100}%,0)`
     },
     callBack () {
+      // save last status
+      this.lastArray = JSON.parse(JSON.stringify(this.defaultArr))
+      this.lastResults = JSON.parse(JSON.stringify(this.results))
       this.$emit('success', this.results)
     },
     onChangeTab (index) {
@@ -150,6 +155,12 @@ export default new Element({
         this.$nextTick(() => {
           this.onTranslate()
         })
+      }
+      if (!this.visible) {
+        if (!(this.results[2] && this.results[2].value)) { // 未选择完成
+          this.defaultArr.splice(0, this.defaultArr.length, ...this.lastArray)
+          this.results.splice(0, this.results.length, ...this.lastResults)
+        }
       }
     }
   }
