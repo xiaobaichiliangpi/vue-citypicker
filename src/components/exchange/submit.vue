@@ -45,7 +45,7 @@
           </mn-radio>
           <div :class="['product-intro', {'show-intro': showDetailId === key }]">
             <div class="product-intro-title" @click="onOpenDetail(key)">商品概述</div>
-            <div :class="['product-intro-text']">{{ item.description }}</div>
+            <div :class="['product-intro-text']"><p>{{ item.description }}</p></div>
           </div>
           </div>
         </mn-card>
@@ -62,8 +62,7 @@
                     v-for="(item, key) in pickType"
                     :key="key"
                     :class="['pickType-item', {'is-selected': item.value === activeType}]"
-                    @click="onSelectType(item.value)"
-                    v-if="(item.value === product[0].pickupMethod) || (product[0].pickupMethod === 3)">
+                    @click="onSelectType(item.value)">
                     {{item.label}}
                   </div>
                 </mn-card-body>
@@ -418,7 +417,9 @@
           } else {
             this.models.consigneeProductId = this.productId
           }
-          this.activeType = this.vuexActiveType
+          this.$nextTick(() => {
+            this.activeType = this.vuexActiveType
+          })
           this.destroyLoadingLayer()
         })
         .catch(error => {
@@ -528,9 +529,10 @@
             break
           }
         }
-        this.$nextTick(() => {
-          this.onSelectType(data.pickupMethod)
-        })
+        console.log(1111, val)
+        // this.$nextTick(() => {
+        this.onSelectType(data.pickupMethod)
+        // })
       }
     }
   }
@@ -693,8 +695,16 @@
   }
 
   .product-intro-text {
-    max-height: 4rem;
+    max-height: 5rem;
+    overflow: hidden;
+    overflow-y: auto;
     padding: .75rem 1rem .75rem .5625rem;
+
+    p {
+      // height: 100%;
+      // overflow: hidden;
+      // overflow-y: auto;
+    }
   }
 }
 

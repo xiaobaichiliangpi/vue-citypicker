@@ -105,6 +105,14 @@
             </mn-card-item>
             <mn-card-item>
               <mn-card-prefix>
+                <mn-label>商品概述</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+              {{item.description || ''}}
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item>
+              <mn-card-prefix>
                 <mn-label>订单编号</mn-label>
               </mn-card-prefix>
               <mn-card-body>
@@ -198,6 +206,14 @@
                 <div class="product-info">
                   <span style="color: #999; font-size: 0.875rem;">×1</span>
                 </div>
+              </mn-card-body>
+            </mn-card-item>
+            <mn-card-item>
+              <mn-card-prefix>
+                <mn-label>商品概述</mn-label>
+              </mn-card-prefix>
+              <mn-card-body>
+              {{item.description || ''}}
               </mn-card-body>
             </mn-card-item>
             <mn-card-item>
