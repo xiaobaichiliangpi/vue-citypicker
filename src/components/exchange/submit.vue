@@ -342,7 +342,6 @@
         this.loadingMaskLayer = LoadingMask.create().show()
         pickupProduct(data)
         .then(response => {
-          console.log(response)
           if (this.loadingMaskLayer) this.loadingMaskLayer.destroy()
           this.$router.push({name: 'exchangeResult'})
         })
@@ -412,7 +411,15 @@
           // this.product = [data]  // test
 
           // one product
-          if (this.product.length === 1) {
+          if (this.product.length === 0) {
+            this.alertLayer = Alert.create({
+              title: '该兑换卡不存在或已兑换',
+              cancelText: '好的'
+            }).show().on('cancel', () => {
+              this.$router.go(-1)
+            })
+            return
+          } else if (this.product.length === 1) {
             this.models.consigneeProductId = this.product[0].realProductId
           } else {
             this.models.consigneeProductId = this.productId
@@ -456,38 +463,42 @@
         const product = this.product.filter(val => {
           return val.realProductId === this.models.consigneeProductId
         })[0]
-        const tempCityArray = [null, null, this.cityArray[2]]
-        const tempProvince = []
-        const tempCity = {}
-        product.expressArea.forEach(val => {
-          let isProvince = /[1-9]{2}[0]{4}/.test(val.value)
-          if (isProvince) { // 省
-            let province = this.cityArray[0].filter(item => {
-              return item.value === val.value
-            })[0]
-            if (!this.provinceIsExist(tempProvince, province)) {
-              tempProvince.push(province)
+        if (product.expressArea && product.expressArea.length) {
+          const tempCityArray = [null, null, this.cityArray[2]]
+          const tempProvince = []
+          const tempCity = {}
+          product.expressArea.forEach(val => {
+            let isProvince = /[1-9]{2}[0]{4}/.test(val.value)
+            if (isProvince) { // 省
+              let province = this.cityArray[0].filter(item => {
+                return item.value === val.value
+              })[0]
+              if (!this.provinceIsExist(tempProvince, province)) {
+                tempProvince.push(province)
+              }
+              // tempProvince.push(province)
+              tempCity[val.value] = this.cityArray[1][val.value]
+            } else { // 市
+              let provinceStr = `${val.value.substring(0, 2)}0000`
+              let province = this.cityArray[0].filter(item => {
+                return item.value === provinceStr
+              })[0]
+              if (!this.provinceIsExist(tempProvince, province)) {
+                tempProvince.push(province)
+              }
+              if (tempCity[provinceStr]) {
+                tempCity[provinceStr].push(val)
+              } else {
+                tempCity[provinceStr] = [val]
+              }
             }
-            // tempProvince.push(province)
-            tempCity[val.value] = this.cityArray[1][val.value]
-          } else { // 市
-            let provinceStr = `${val.value.substring(0, 2)}0000`
-            let province = this.cityArray[0].filter(item => {
-              return item.value === provinceStr
-            })[0]
-            if (!this.provinceIsExist(tempProvince, province)) {
-              tempProvince.push(province)
-            }
-            if (tempCity[provinceStr]) {
-              tempCity[provinceStr].push(val)
-            } else {
-              tempCity[provinceStr] = [val]
-            }
-          }
-        })
-        tempCityArray[0] = tempProvince
-        tempCityArray[1] = tempCity
-        this.realCityArray = tempCityArray
+          })
+          tempCityArray[0] = tempProvince
+          tempCityArray[1] = tempCity
+          this.realCityArray = tempCityArray
+        } else {
+          this.realCityArray = JSON.parse(JSON.stringify(this.cityArray))
+        }
       },
       provinceIsExist (arr, province) {
         return arr.filter(key => {
@@ -496,7 +507,6 @@
       }
     },
     created () {
-      console.log(this.cityArray)
       this.createLoadingMask()
       this.getProductByCard()
     },
@@ -529,7 +539,6 @@
             break
           }
         }
-        console.log(1111, val)
         // this.$nextTick(() => {
         this.onSelectType(data.pickupMethod)
         // })
