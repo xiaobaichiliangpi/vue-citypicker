@@ -206,6 +206,7 @@
   import { getProductByCard, pickupProduct } from '../../axios/exchange'
   import Alert from 'vue-human/utils/Alert'
   import LoadingMask from 'vue-human/utils/LoadingMask'
+  import Message from 'vue-human/utils/Message'
   import CityPicker from '../common/picker.vue'
   import CityArray from '../common/areaData.js'
   // import Toast from '../common/toast'
@@ -431,6 +432,7 @@
         })
         .catch(error => {
           console.log(error)
+          Message.create({type: 'error', message: error.response.data.message}).show()
           this.destroyLoadingLayer()
         })
       },
